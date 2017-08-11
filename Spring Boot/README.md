@@ -1,2 +1,2 @@
-# blog
-My blog.
+# Spring Boot
+Spring Boot Tech Blog.
