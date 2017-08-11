@@ -51,7 +51,7 @@ public class MainApp {
 ```
 
 ## @Import 注解
-@Import 注解允许从另一个配置类中加载 @Bean 定义。
+@Import 注解允许从另一个配置类中加载 @Bean 定义。就像 Spring 的 XML 文件中使用的<import/>元素帮助模块化配置一样，@Import注解允许从其它配置类中加载@Bean的配置。
 
 考虑 ConfigA 类，如下所示：
 ```
@@ -85,6 +85,45 @@ public static void main(String[] args) {
    B b = ctx.getBean(B.class);
 }
 ```
+
+## AnnotationConfigApplicationContext
+AnnotationConfigApplicationContext可以使用无参构造方法来实例化，之后使用register()方法来配置。这个方法当编程式地构建AnnotationConfigApplicationContext时尤其有用:
+```
+public static void main(String[] args) {
+    AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
+    ctx.register(AppConfig.class, OtherConfig.class);
+    ctx.register(AdditionalConfig.class);
+    ctx.refresh();
+    MyService myService = ctx.getBean(MyService.class);
+    myService.doStuff();
+}
+```
+
+要开启组件扫描，仅仅需要在你的@Configuration类上加上如下注解：
+```
+@Configuration
+@ComponentScan(basePackages = "com.acme")
+public class AppConfig  {
+    ...
+}
+```
+
+有经验的 Spring 用户肯定会熟悉下面这个 Spring 的 context:命名空间中的常用 XML声明：
+```
+<beans>
+    <context:component-scan base-package="com.acme"/>
+</beans>
+```
+在上面的示例中，com.acme包会被扫描到，去查找任意@Component注解的类，那些类就会被注册为 Spring 容器中的 bean。AnnotationConfigApplicationContext 暴露出 scan(String ...)方法，允许相同的组件扫描功能：
+```
+public static void main(String[] args) {
+    AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
+    ctx.scan("com.acme");
+    ctx.refresh();
+    MyService myService = ctx.getBean(MyService.class);
+}
+```
+
 
 ## @Bean注解
 ### 生命周期回调
@@ -122,5 +161,17 @@ public class AppConfig {
 }
 ```
 
+### 指定bean的名称
+默认地，配置类使用@Bean方法的名称来作为注册bean的名称。这个方法可以被重写，当然，使用的是name属性。
+```
+@Configuration
+public class AppConfig {
+
+    @Bean(name = "myFoo")
+    public Foo foo() {
+        return new Foo();
+    }
+}
+```
 
 
