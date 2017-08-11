@@ -4,4 +4,4 @@ Spring Framework 的功能被组织成了 20 来个模块。这些模块分成 C
 
 Figure 2.1. Overview of the Spring Framework:
 <br>
-![Spring-Framework-Overview](../../docs/image/Spring-Framework-overview.png)
+![Spring-Framework-Overview](/docs/image/Spring-Framework-overview.png)
