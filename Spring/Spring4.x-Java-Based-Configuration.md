@@ -41,7 +41,7 @@ import org.springframework.context.annotation.*;
 public class MainApp {
    public static void main(String[] args) {
       ApplicationContext ctx = 
-      new AnnotationConfigApplicationContext(HelloWorldConfig.class);
+      new AnnotationConfigApplicationContext(AppConfig.class);
 
       Foo foo = ctx.getBean(Foo.class);
 
