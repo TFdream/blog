@@ -1,8 +1,12 @@
-# Blog
-[![License](https://img.shields.io/badge/license-Apache%202-green.svg)](https://www.apache.org/licenses/LICENSE-2.0) 
+# FX_SKY
+且码且思考
 
 ## 2017
 「Stay hungry. Stay foolish.」
+
+### September
+九月九日望遥空，秋水秋天生夕风。 
+
 
 ### August
 八月中秋月正圆，送君吟上木兰船。
