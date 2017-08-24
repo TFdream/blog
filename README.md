@@ -5,7 +5,7 @@
 「Stay hungry. Stay foolish.」
 
 ### September
-九月九日望遥空，秋水秋天生夕风。 
+星河璀璨，凤舞九天。 
 * September 1, 2017 >>> [Ch9]()
 
 ### August
