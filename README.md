@@ -1,6 +1,7 @@
 # FX_SKY
-[![License](https://img.shields.io/badge/license-Apache%202-green.svg)](https://www.apache.org/licenses/LICENSE-2.0)
-且码且思考.
+[![License](https://img.shields.io/badge/license-Apache%202-green.svg)](https://www.apache.org/licenses/LICENSE-2.0)   
+
+**且码且思考**
 
 ## 2017
 「Stay hungry. Stay foolish.」
