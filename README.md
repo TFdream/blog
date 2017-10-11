@@ -6,6 +6,10 @@
 ## 2017
 「Stay hungry. Stay foolish.」
 
+### October
+星河璀璨，凤舞九天。 
+* October 11, 2017 >>> [使用Apache Tika检测上传文件MIME类型]()
+
 ### September
 星河璀璨，凤舞九天。 
 * September 1, 2017 >>> [Ch9]()
