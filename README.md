@@ -7,7 +7,7 @@
 「Stay hungry. Stay foolish.」
 
 ### October
-星河璀璨，凤舞九天。 
+金秋风景如画，十月天高云淡。 
 * October 11, 2017 >>> [使用Apache Tika检测上传文件MIME类型]()
 
 ### September
