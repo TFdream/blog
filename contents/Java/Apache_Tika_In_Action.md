@@ -124,9 +124,9 @@ File F:\backup\demo.txt is text/plain
   </dependency>
 ````
 
-Apache Tika 文件内容解析的核心API类是 ```org.apache.tika.parser.Parser```，它通过``` Java SPI ```机制来扩展，在[tika-parsers/src/main/resources/META-INF/services/org.apache.tika.parser.Parser](https://gitbox.apache.org/repos/asf?p=tika.git;a=blob;f=tika-parsers/src/main/resources/META-INF/services/org.apache.tika.parser.Parser;hb=refs/heads/master) 中包含了Tika内置的Parser实现类。
+Apache Tika 文件内容解析的核心API类是 ```org.apache.tika.parser.Parser```，它通过``` Java SPI ```机制来扩展，在[tika-parsers/src/main/resources/META-INF/services/org.apache.tika.parser.Parser](https://gitbox.apache.org/repos/asf?p=tika.git;a=blob;f=tika-parsers/src/main/resources/META-INF/services/org.apache.tika.parser.Parser;hb=refs/heads/master) 中列举了Tika内置的所有Parser实现类，当然如果没有适合我们需求的Parser，可以通过 Java SPI 挂载我们自己的实现类。
 
-API使用比较简单，如下：
+Tika Parser API的使用比较简单，固定套路如下：
 ```
 Parser parser = ...;
 InputStream stream = ...;      // open the stream
