@@ -6,7 +6,10 @@
 > All of these file types can be parsed through a single interface, making Tika useful for search engine indexing, content analysis, translation, and much more.
 
 ## 3分钟入门
-### 1.maven依赖
+
+### 一、 检测文件类型（The Detector Interface）
+
+如果仅仅是使用Tika 检测文档的类型，只需要添加 ``` tika-core ```依赖即可：
 ```
     <dependency>
         <groupId>org.apache.tika</groupId>
@@ -14,8 +17,6 @@
         <version>1.16</version>
     </dependency>
 ```
-
-### 2. 检测文件类型（The Detector Interface）
 
 Apache Tika 官方提供的 [Detection](http://tika.apache.org/1.16/detection.html) demo如下：
 ```
@@ -112,6 +113,27 @@ File F:\backup\蔡学镛架构设计方法-2014-8-17.pdf is application/pdf
 File F:\backup\demo.txt is text/plain
 ```
 
-### 3. 解析文件内容（The Parser interface） 
-[Demo](http://tika.apache.org/1.16/parser.html)
+### 二、 解析文件内容（The Parser interface） 
+
+如果你打算使用Tika 解析文档的内容，你需要添加 ```tika-parsers``` 依赖：
+```
+  <dependency>
+    <groupId>org.apache.tika</groupId>
+    <artifactId>tika-parsers</artifactId>
+    <version>1.16</version>
+  </dependency>
+````
+
+Apache Tika 文件内容解析的核心API类是 ```org.apache.tika.parser.Parser```，它通过``` Java SPI ```机制来扩展，在[tika-parsers/src/main/resources/META-INF/services/org.apache.tika.parser.Parser](https://gitbox.apache.org/repos/asf?p=tika.git;a=blob;f=tika-parsers/src/main/resources/META-INF/services/org.apache.tika.parser.Parser;hb=refs/heads/master) 中包含了Tika内置的Parser实现类。
+
+API使用比较简单，如下：
+```
+Parser parser = ...;
+InputStream stream = ...;      // open the stream
+try {
+    parser.parse(stream, ...); // parse the stream
+} finally {
+    stream.close();            // close the stream
+}
+```
 
