@@ -8,7 +8,7 @@
 
 ### October
 金秋风景如画，十月天高云淡。 
-* October 11, 2017 >>> [使用Apache Tika检测上传文件MIME类型]()
+* October 11, 2017 >>> [使用Apache Tika 检测上传文件类型](contents/Java/Apache_Tika_In_Action.md)
 
 ### September
 星河璀璨，凤舞九天。 
