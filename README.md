@@ -8,6 +8,7 @@
 
 ### October
 金秋风景如画，十月天高云淡。 
+* October 16, 2017 >>> [阿里巴巴Java开发规约插件全球首发](contents/Java/Alibaba_Java_Coding_Guidelines.md)
 * October 11, 2017 >>> [使用Apache Tika 检测上传文件类型](contents/Java/Apache_Tika_In_Action.md)
 
 ### September
