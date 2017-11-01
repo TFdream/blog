@@ -6,6 +6,10 @@
 ## 2017
 「Stay hungry. Stay foolish.」
 
+### November
+江城山寺十一月，北风吹沙雪纷纷。
+* November 1, 2017 >>> [基于Redis实现分布式锁](contents/Archtecture/Redis_Distributed_Lock_Implementation.md)
+
 ### October
 金秋风景如画，十月天高云淡。 
 * October 16, 2017 >>> [阿里巴巴Java开发规约插件全球首发](contents/Java/Alibaba_Java_Coding_Guidelines.md)
