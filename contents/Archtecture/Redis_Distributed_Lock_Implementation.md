@@ -72,6 +72,10 @@ public boolean tryLock(long leaseTime, TimeUnit unit) {
 	}
 	return false;
 }
+
+protected String getLockName(long threadId) {
+	return String.format("%s:%d", id, threadId);
+}
 ```
 
 2. 解锁
