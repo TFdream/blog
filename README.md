@@ -8,7 +8,7 @@
 
 ### November
 江城山寺十一月，北风吹沙雪纷纷。
-* November 3, 2017 >>> [Java后端开发面试知识点](contents/Interview/Java_Backend_Interview_Concurrent.md)
+* November 3, 2017 >>> [Java后端高级开发面试题集锦之并发篇](contents/Interview/Java_Backend_Interview_Concurrent.md)
 * November 1, 2017 >>> [基于Redis实现分布式锁](contents/Archtecture/Redis_Distributed_Lock_Implementation.md)
 
 ### October
