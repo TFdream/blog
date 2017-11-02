@@ -62,4 +62,30 @@ public void unlock(){
 
 setnx来创建一个key，如果key不存在则创建成功返回1，如果key已经存在则返回0。依照上述来判定是否获取到了锁，获取到锁的执行业务逻辑，完毕后删除lock_key，来实现释放锁。
 
+### 改进版
+1. 加锁
+```
+public boolean tryLock(long leaseTime, TimeUnit unit) {
+	String resp = jedis.set(resourceName, getLockName(Thread.currentThread().getId()), "NX", "PX", unit.toMillis(leaseTime));
+	if ("OK".equals(resp)) {
+		return true;
+	}
+	return false;
+}
+```
 
+2. 解锁
+```
+    public void unlock() {
+        String holder = jedis.get(resourceName);
+        if (getLockName(Thread.currentThread().getId()).equals(holder)) {  //release
+            jedis.del(resourceName);
+        }
+    }
+```
+
+### 终极版
+1. 加锁
+```
+
+```
