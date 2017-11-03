@@ -113,6 +113,7 @@ public interface DLock {
 }
 ```
 
+RedisLock
 ```
 import pandora.distlock.DLock;
 import pandora.redis.RedisTemplate;
@@ -131,10 +132,13 @@ public class RedisLock implements DLock {
     private RedisTemplate redisTemplate;
     private LuaScript luaScript = new LuaScript();
 
+    private final List<String> keys = new ArrayList<>(1);
+
     public RedisLock(String id, String resourceName, RedisTemplate redisTemplate) {
         this.id = id;
         this.resourceName = resourceName;
         this.redisTemplate = redisTemplate;
+        this.keys.add(resourceName);
     }
 
     @Override
@@ -176,13 +180,8 @@ public class RedisLock implements DLock {
 
     @Override
     public boolean isHeldByCurrentThread() {
-
-        List<String> keys = new ArrayList<>(1);
-        keys.add(resourceName);
-
-        List<String> args = new ArrayList<>(4);
+        List<String> args = new ArrayList<>(1);
         args.add(getLockValue());
-
         Long update = (Long) redisTemplate.eval(luaScript.buildHeldByCurrentThreadScript(), keys,
                 args);
         if (update==1) {
@@ -198,18 +197,13 @@ public class RedisLock implements DLock {
 
     @Override
     public void unlock() {
-        List<String> keys = new ArrayList<>(1);
-        keys.add(resourceName);
-        List<String> args = new ArrayList<>(4);
+        List<String> args = new ArrayList<>(1);
         args.add(getLockValue());
         Long update = (Long) redisTemplate.eval(luaScript.buildUnLockScript(), keys, args);
 
     }
 
     private boolean tryAcquire(long leaseTime, TimeUnit unit) {
-        List<String> keys = new ArrayList<>(1);
-        keys.add(resourceName);
-
         List<String> args = new ArrayList<>(4);
         args.add(getLockValue());
         args.add("NX");
@@ -227,6 +221,7 @@ public class RedisLock implements DLock {
     }
 
 }
+
 ```
 
 LuaScript
