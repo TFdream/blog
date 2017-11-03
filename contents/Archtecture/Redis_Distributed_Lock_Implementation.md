@@ -270,3 +270,45 @@ public class LuaScript {
 
 }
 ```
+
+```
+/**
+ * @author Ricky Fung
+ */
+public class Panda {
+    private final RedisTemplate redisTemplate;
+
+    public Panda(RedisTemplate redisTemplate) {
+        this.redisTemplate = redisTemplate;
+    }
+
+    public DLock getLock(String name) {
+        return new RedisLock(UUIDUtils.getUUID(), name, redisTemplate);
+    }
+}
+```
+
+```
+    Panda panda = new Panda(redisTemplate);
+    
+    @Test
+    public void testReentrantLock() throws InterruptedException {
+        String res = "res1";
+        DLock lock = panda.getLock(res);
+        try {
+            boolean success = lock.tryLock(5, 30, TimeUnit.SECONDS);
+            System.out.println("key:"+res+" value:"+redisTemplate.get(res));
+            if (success) {
+                System.out.println("re-entry:"+lock.tryLock(5, 30, TimeUnit.SECONDS));
+                System.out.println("YES");
+            } else {
+                System.out.println("NO");
+            }
+        } finally {
+            lock.unlock();
+        }
+        System.out.println("key:"+res+" value:"+redisTemplate.get(res));
+    }
+```
+
+
