@@ -91,5 +91,187 @@ protected String getLockName(long threadId) {
 ### 终极版
 1. 加锁
 ```
+import java.util.concurrent.TimeUnit;
 
+/**
+ * Distributed Lock
+ * @author Ricky Fung
+ */
+public interface DLock {
+
+    void lock();
+
+    boolean tryLock(long waitTime, long leaseTime, TimeUnit unit) throws InterruptedException;
+
+    boolean isLocked();
+
+    boolean isHeldByCurrentThread();
+
+    void forceUnlock();
+
+    void unlock();
+}
+```
+
+```
+import pandora.distlock.DLock;
+import pandora.redis.RedisTemplate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+/**
+ * 参考：[Distributed locks with Redis](https://redis.io/topics/distlock)
+ * @author Ricky Fung
+ */
+public class RedisLock implements DLock {
+
+    private String id; //唯一标识id
+    private String resourceName;    //资源名称
+    private RedisTemplate redisTemplate;
+    private LuaScript luaScript = new LuaScript();
+
+    public RedisLock(String id, String resourceName, RedisTemplate redisTemplate) {
+        this.id = id;
+        this.resourceName = resourceName;
+        this.redisTemplate = redisTemplate;
+    }
+
+    @Override
+    public void lock() {
+
+    }
+
+    @Override
+    public boolean tryLock(long waitTime, long leaseTime, TimeUnit unit) throws InterruptedException {
+        long time = unit.toMillis(waitTime);
+        long current = System.currentTimeMillis();
+        boolean res = tryAcquire(leaseTime, unit);
+        // lock acquired
+        if (res) {
+            return true;
+        }
+        time -= (System.currentTimeMillis() - current);
+        if (time <= 0) {
+            return false;
+        }
+        while (true) {
+            long currentTime = System.currentTimeMillis();
+            res = tryAcquire(leaseTime, unit);
+            // lock acquired
+            if (res) {
+                return true;
+            }
+            time -= (System.currentTimeMillis() - currentTime);
+            if (time <= 0) {
+                return false;
+            }
+        }
+    }
+
+    @Override
+    public boolean isLocked() {
+        return redisTemplate.exists(resourceName);
+    }
+
+    @Override
+    public boolean isHeldByCurrentThread() {
+
+        List<String> keys = new ArrayList<>(1);
+        keys.add(resourceName);
+
+        List<String> args = new ArrayList<>(4);
+        args.add(getLockValue());
+
+        Long update = (Long) redisTemplate.eval(luaScript.buildHeldByCurrentThreadScript(), keys,
+                args);
+        if (update==1) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void forceUnlock() {
+        redisTemplate.del(resourceName);
+    }
+
+    @Override
+    public void unlock() {
+        List<String> keys = new ArrayList<>(1);
+        keys.add(resourceName);
+        List<String> args = new ArrayList<>(4);
+        args.add(getLockValue());
+        Long update = (Long) redisTemplate.eval(luaScript.buildUnLockScript(), keys, args);
+
+    }
+
+    private boolean tryAcquire(long leaseTime, TimeUnit unit) {
+        List<String> keys = new ArrayList<>(1);
+        keys.add(resourceName);
+
+        List<String> args = new ArrayList<>(4);
+        args.add(getLockValue());
+        args.add("NX");
+        args.add("PX");
+        args.add(String.valueOf(unit.toMillis(leaseTime)));
+        Long update = (Long) redisTemplate.eval(luaScript.buildLockScript(), keys, args);
+        if (update==1) {
+            return true;
+        }
+        return false;
+    }
+
+    protected String getLockValue() {
+        return String.format("%s:%d", id, Thread.currentThread().getId());
+    }
+
+}
+```
+
+LuaScript
+```
+/**
+ * @author Ricky Fung
+ */
+public class LuaScript {
+
+    /**
+     * SET resource_name my_random_value NX PX 30000
+     * @return
+     */
+    public String buildLockScript() {
+        StringBuilder sb = new StringBuilder(120);
+        sb.append("if redis.call('set', KEYS[1], ARGV[1], ARGV[2], ARGV[3], tonumber(ARGV[4])) == 1 then ")
+                .append("\t return 1 ")
+                .append("end ")
+                .append("if redis.call('get', KEYS[1]) == ARGV[1] then ")
+                .append("\t return 1 ")
+                .append("else ")
+                .append("\t return 0 ")
+                .append("end");
+        return sb.toString();
+    }
+
+    public String buildUnLockScript() {
+        StringBuilder sb = new StringBuilder(120);
+        sb.append("if redis.call('get', KEYS[1]) == ARGV[1] then ")
+                .append("\t return redis.call('del', KEYS[1]) ")
+                .append("else ")
+                .append("\t return 0 ")
+                .append("end");
+        return sb.toString();
+    }
+
+    public String buildHeldByCurrentThreadScript() {
+        StringBuilder sb = new StringBuilder(120);
+        sb.append("if redis.call('get', KEYS[1]) == ARGV[1] then ")
+                .append("\t return 1 ")
+                .append("else ")
+                .append("\t return 0 ")
+                .append("end");
+        return sb.toString();
+    }
+
+}
 ```
