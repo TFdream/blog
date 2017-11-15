@@ -93,6 +93,8 @@ java -jar --spring.profiles.active=prod xxx.jar  表示加载生产环境的配�
 
 
 ### 2. 使用properties文件
+如果使用application.properties进行多个环境的配置,原理跟使用多个yml配置文件一致,也是通过application-{profile}.properties来控制加载哪个环境的配置,将于环境无关的属性,放置到application.properties文件里面,通过spring.profiles.active=profiles的值,加载不同环境的配置,如果不指定,则默认加载application.properties的配置,不会加载带有profile的配置
+
 
 ### 3. 使用Maven Profile
 
