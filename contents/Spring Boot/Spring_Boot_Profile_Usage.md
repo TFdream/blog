@@ -96,3 +96,7 @@ java -jar --spring.profiles.active=prod xxx.jar  表示加载生产环境的配�
 
 ### 3. 使用Maven Profile
 
+
+## 参考文档
+[Spring Boot Reference Guide - Profiles](https://docs.spring.io/spring-boot/docs/1.5.8.RELEASE/reference/htmlsingle/#boot-features-profiles)
+
