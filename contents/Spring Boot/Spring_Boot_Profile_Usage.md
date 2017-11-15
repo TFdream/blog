@@ -89,15 +89,21 @@ java -jar --spring.profiles.active=prod xxx.jar  表示加载生产环境的配�
 
 
 #### 使用多个yml配置文件进行配置属性文件
-如果是使用多个yml来配置属性，通过与配置文件相同的明明规范，创建application-{profile}.yml文件,将于环境无关的属性,放置到application.yml文件里面,可以通过这种形式来配置多个环境的属性文件,在application.yml文件里面指定spring.profiles.active=profiles的值,来加载不同环境的配置,如果不指定,则默认只使用application.yml属性文件,不会加载其他的profiles的配置
+如果是使用多个yml来配置属性，通过与配置文件相同的明明规范，创建application-{profile}.yml文件,将于环境无关的属性,放置到application.yml文件里面,可以通过这种形式来配置多个环境的属性文件,在application.yml文件里面指定```spring.profiles.active=xxx```,来加载不同环境的配置,如果不指定,则默认只使用application.yml属性文件,不会加载其他的profiles的配置
 
 
 ### 2. 使用properties文件
-如果使用application.properties进行多个环境的配置,原理跟使用多个yml配置文件一致,也是通过application-{profile}.properties来控制加载哪个环境的配置,将于环境无关的属性,放置到application.properties文件里面,通过spring.profiles.active=profiles的值,加载不同环境的配置,如果不指定,则默认加载application.properties的配置,不会加载带有profile的配置
+如果使用application.properties进行多个环境的配置,原理跟使用多个yml配置文件一致,也是通过application-{profile}.properties来控制加载哪个环境的配置,将于环境无关的属性,放置到application.properties文件里面,通过```spring.profiles.active=xxx```,加载不同环境的配置,如果不指定,则默认加载application.properties的配置,不会加载带有profile的配置
 
 
-### 3. 使用Maven Profile
+### 3. Maven中的场景配置
+```
 
+
+```
+
+## 源码
+[spring-boot-profiles](https://github.com/TFrise/spring-boot-tutorials/tree/master/spring-boot-profiles)
 
 ## 参考文档
 [Spring Boot Reference Guide - Profiles](https://docs.spring.io/spring-boot/docs/1.5.8.RELEASE/reference/htmlsingle/#boot-features-profiles)
