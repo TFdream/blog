@@ -81,12 +81,19 @@ spring:
 如果是部署到服务器的话,我们正常打成jar包，启动时通过
 ```--spring.profiles.active=xxx```来控制加载哪个环境的配置，完整命令如下:
 ```
-java -jar --spring.profiles.active=test xxx.jar  表示加载测试环境的配置
+java -jar xxx.jar --spring.profiles.active=test 表示加载测试环境的配置
 
-java -jar --spring.profiles.active=prod xxx.jar  表示加载生产环境的配置
+java -jar xxx.jar --spring.profiles.active=prod 表示加载生产环境的配置
 ```
-上面介绍完了,我们本地启动一下,先将spring.profiles.active的值设置为dev,看看日志打印结果:
 
+#### 命令行参数
+通过 ```java -jar app.jar --name="Spring" --server.port=9090``` 方式来传递参数。
+
+参数用 ```--xxx=xxx```的形式传递。
+
+可以使用的参数可以是我们自己定义的，也可以是Spring Boot中默认的参数。
+
+**注意：命令行参数在app.jar的后面**
 
 #### 使用多个yml配置文件进行配置属性文件
 如果是使用多个yml来配置属性，通过与配置文件相同的明明规范，创建application-{profile}.yml文件,将于环境无关的属性,放置到application.yml文件里面,可以通过这种形式来配置多个环境的属性文件,在application.yml文件里面指定```spring.profiles.active=xxx```,来加载不同环境的配置,如果不指定,则默认只使用application.yml属性文件,不会加载其他的profiles的配置
