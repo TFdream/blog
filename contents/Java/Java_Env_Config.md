@@ -7,3 +7,9 @@
 ```
 ;%JAVA_HOME%\bin;%JAVA_HOME%\jre\bin;
 ```
+
+### 3. 验证
+打开命令行窗口，执行命令：
+```
+> java -version
+```
