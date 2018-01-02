@@ -61,3 +61,6 @@ Default locale: zh_CN, platform encoding: GBK
 OS name: "windows 10", version: "10.0", arch: "amd64", family: "windows"
 ```
 
+## 注意事项
+Linux下用冒号“:”来分隔路径，Windows下使用分号“;”来分隔路径。
+
