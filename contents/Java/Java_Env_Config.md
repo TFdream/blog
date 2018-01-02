@@ -37,7 +37,9 @@ Java HotSpot(TM) 64-Bit Server VM (build 25.121-b13, mixed mode)
 配置M2_HOME环境变量，指向maven的安装目录，并将bin目录追加到PATH路径中，方便在命令行调用。
 
 #### 2.1 Windows
+![](https://github.com/TFdream/blog/blob/master/docs/image/maven_home.png)
 
+并在 Path 末尾加上：
 ```
 ;%M2_HOME%\bin;
 ```
