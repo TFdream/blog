@@ -3,6 +3,14 @@
 
 **且码且思考**
 
+## 2018
+「Stay hungry. Stay foolish.」
+
+### January
+一月秋晴一月泥，南翁此谚似可疑。
+* January 29, 2018 >>> [分布式事务之TCC](contents/Archtecture/TCC.md)
+
+
 ## 2017
 「Stay hungry. Stay foolish.」
 
@@ -58,11 +66,6 @@
 不知细叶谁裁出，二月春风似剪刀。
 
 * February 1, 2017 >>> [Ch2]()
-
-### January
-一月秋晴一月泥，南翁此谚似可疑。
-
-* January 1, 2017 >>> [Ch1]()
 
 
 
