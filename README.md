@@ -4,18 +4,17 @@
 **且码且思考**
 
 ## 2018
-「Stay hungry. Stay foolish.」
+「静坐常思己过，闲谈莫论人非」
 
 ### February
 不知细叶谁裁出，二月春风似剪刀。
-* February 8, 2017 >>> [高并发系统设计 - 限流](contents/Archtecture/High_Concurrency_RateLimit.md)
-* February 7, 2018 >>> [Spring扫描自定义Annotation](contents/Spring/Spring_Annotation_Scan.md)
-* February 16, 2017 >>> [高并发系统设计 - 降级](contents/Archtecture/High_Concurrency_Degrade.md)
+* February 8, 2018 >>> [高并发系统设计 - 限流](contents/Archtecture/High_Concurrency_RateLimit.md)
+* February 1, 2018 >>> [高并发系统设计 - 降级](contents/Archtecture/High_Concurrency_Degrade.md)
 
 ### January
 一月秋晴一月泥，南翁此谚似可疑。
 * January 29, 2018 >>> [分布式事务之TCC](contents/Archtecture/TCC.md)
-
+* January 1, 2018 >>> [Spring扫描自定义Annotation](contents/Spring/Spring_Annotation_Scan.md)
 
 ## 2017
 「Stay hungry. Stay foolish.」
