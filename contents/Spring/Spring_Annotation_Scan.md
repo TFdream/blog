@@ -84,7 +84,7 @@ public class ConfigChangeListenerProcessor implements BeanPostProcessor {
         Method[] methods = ReflectionUtils.getAllDeclaredMethods(bean.getClass());
         if (methods != null) {
             for (Method method : methods) {
-                MyListener myListener = AnnotationUtils.findAnnotation(method, ConfigChangeListener.class);
+                ConfigChangeListener listener = AnnotationUtils.findAnnotation(method, ConfigChangeListener.class);
                 // process
             }
         }
