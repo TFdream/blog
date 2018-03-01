@@ -3,11 +3,30 @@
 ## 线程
 ### 线程的生命周期
 
+### 创建线程的方式
+两种方式：
+* 通过实现java.lang.Runnable
+* 通过扩展java.lang.Thread类.
+
+相比扩展Thread，实现Runnable接口可能更优，原因有二：
+* Java不支持多继承，因此扩展Thread类就代表这个子类不能扩展其他类，而实现Runnable接口的类还可能扩展另一个类；
+* 类可能只要求可执行即可，因此继承自Thread类的开销过大。
+
+### Runnable和Callable的区别
+Runnable接口中的run()方法的返回值是void，它做的事情只是纯粹地去执行run()方法中的代码而已； Callable接口中的call()方法是有返回值的，是一个泛型，和Future、FutureTask配合可以用来获取异步执行的结果。
+
+### Thread的 sleep() 、join()、yield() 有什么区别
+
+Thread.yield() 使得线程放弃当前分得的 CPU 时间，但是不使线程阻塞，即线程仍处于可执行状态，随时可能再次分得 CPU 时间。调用 yield() 的效果等价于调度程序认为该线程已执行了足够的时间从而转到另一个线程。
+
+Thread.join 把指定的线程加入到当前线程，可以将两个交替执行的线程合并为顺序执行的线程。比如在线程B中调用了线程A的join()方法，那么直到线程A执行完毕后，才会继续执行线程B。
+
 ### 线程池的实现原理
 
 ### ThreadLocal实现原理
+简单说ThreadLocal就是一种以空间换时间的做法在每个Thread里面维护了一个ThreadLocal。ThreadLocalMap把数据进行隔离，数据不共享，自然就没有线程安全方面的问题了。
 
-## 锁
+## 锁机制
 ### Java中的有哪些锁
 比如Synchronized和ReentrantLock。
 
@@ -27,6 +46,14 @@ CAS（Compare and Swap）是通过Unsafe类的compareAndSwap方法实现的，�
 CAS存在一个很明显的问题，即ABA问题。
 问题：如果变量V初次读取的时候是A，并且在准备赋值的时候检查到它仍然是A，那能说明它的值没有被其他线程修改过了吗？
 如果在这段期间曾经被改成B，然后又改回A，那CAS操作就会误认为它从来没有被修改过。针对这种情况，java并发包中提供了一个带有标记的原子引用类AtomicStampedReference，它可以通过控制变量值的版本来保证CAS的正确性。
+
+### AtomicInteger 内部实现
+其实就是 CAS + volatile
+
+### synchronized 与 lock 的区别
+ReentrantLock 在加锁和内存上提供的语义上与内置锁相同，此外它还提供了一些其他功能，包括定时的锁等待、可中断的锁等待、公平性，以及实现非块结构的加锁。
+
+### 乐观锁&悲观锁
 
 
 ## volatile关键字
