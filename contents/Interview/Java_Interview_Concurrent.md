@@ -32,6 +32,8 @@ Thread thread = new Thread();
 #### 7、死亡(dead)
 线程run()、main() 方法执行结束，或者因异常退出了run()方法，则该线程结束生命周期。死亡的线程不可再次复生。
 
+具体参考：[Java线程的状态](https://www.jianshu.com/p/dbbcceb6bc2a)
+
 ### 创建线程的方式
 两种方式：
 * 通过实现java.lang.Runnable
@@ -54,8 +56,12 @@ Thread.join 把指定的线程加入到当前线程，可以将两个交替执�
 
 ### 线程池的实现原理
 
+具体参考：[ThreadPoolExecutor 线程池源码分析](https://juejin.im/post/5a7abe75f265da4e7e10a19e)
+
 ### ThreadLocal实现原理
 简单说ThreadLocal就是一种以空间换时间的做法在每个Thread里面维护了一个ThreadLocal。ThreadLocalMap把数据进行隔离，数据不共享，自然就没有线程安全方面的问题了。
+
+具体参考：[ThreadLocal源码分析](http://blog.csdn.net/top_code/article/details/51397397)
 
 ## 锁机制
 ### Java中的有哪些锁
@@ -96,5 +102,15 @@ volatile关键字提供了内存可见性和禁止内存重排序。
 
 ## ConcurrentHashMap实现原理
 [谈谈ConcurrentHashMap1.7和1.8的不同实现](https://www.jianshu.com/p/e694f1e868ec)
+
+## 有哪些多线程开发良好的实践?
+* 给线程命名；
+* 最小化同步范围；
+* 优先使用volatile；
+* 尽可能使用更高层次的并发工具而非wait和notify()来实现线程通信，如BlockingQueue,Semeaphore；
+* 优先使用并发容器而非同步容器；
+* 考虑使用线程池
+
+本文将会不定期更新，欢迎大家持续关注！
 
 
