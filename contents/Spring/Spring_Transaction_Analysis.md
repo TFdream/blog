@@ -1,4 +1,4 @@
-Spring @Transactional 实现源码分析
+Spring @Transactional 实现原理分析
 
 
 ## 参考
