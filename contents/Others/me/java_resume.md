@@ -7,8 +7,8 @@
 | **联系电话** | 186-1150-3575 | **个人邮箱** | ricky_feng@163.com |
 
 - 技术博客
-  - CSDN博客: http://blog.csdn.net/top_code?viewmode=contents
-   - 简书博客: http://www.jianshu.com/u/215e5a237558
+  - CSDN: http://blog.csdn.net/top_code?viewmode=contents
+  - 简书: http://www.jianshu.com/u/215e5a237558
 * Github: https://github.com/TFdream
 * 期望职位：Java资深开发工程师
 
@@ -32,7 +32,7 @@
 * 采用Spring + SpringMVC + MyBatis + Dubbo 构建后端服务，每个服务均无状态，可横向扩展；
 * 使用https + jwt 保证RESTful API 身份认证的安全性；
 * 借款单状态变更通过MQ消息通知，实现借款单状态准实时同步；
-* 采用分布式任务调度框架实现用户授信额度过期状态变更、还款后额度本金恢复等功能。
+* 采用分布式任务调度框架实现用户授信额度过期自动失效、还款后额度本金自动恢复等功能。
 
 #### 岗位职责
 1. 负责小咖贷借款App后端研发工作，参与整个项目的需求分析，完成技术方案和系统架构设计；
@@ -78,6 +78,3 @@
 ## 其他
 * 有强烈上进心，自我驱动，学习适应能力强，乐于挑战自我不断追求卓越；
 * 平时喜欢看书、研究开源代码、关注前沿技术，热爱各类体育运动(如篮球、羽毛球)；
-* [CSDN博客](http://blog.csdn.net/top_code?viewmode=contents): http://blog.csdn.net/top_code?viewmode=contents
-* [简书博客](http://www.jianshu.com/u/215e5a237558): http://www.jianshu.com/u/215e5a237558
-* [Github](https://github.com/TiFG/): https://github.com/TiFG/
