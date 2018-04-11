@@ -9,10 +9,11 @@
 
 
 ## 实战
+### 1. RedisRateLimiter
 ```
-package demo.pandora.redis;
+package redis.ratelimit;
 
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import demo.pandora.redis.RedisRateLimiterDemo;
 import pandora.redis.RedisTemplate;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -26,41 +27,55 @@ import java.util.List;
  * @author Ricky Fung<br/>
  * Created on 2018-04-11<br/>
  */
-public class RedisRateLimiterDemo {
+public class RedisRateLimiter {
     private static final String PREFIX = "META-INF/scripts/";
 
-    public static void main(String[] args) {
+    private RedisTemplate redisTemplate;
+    private final String redisKeyPrefix;
 
-        new RedisRateLimiterDemo().testRateLimit();
+    /** How many requests per second do you want a user to be allowed to do? **/
+    private final int replenishRate;
+    /** How much bursting do you want to allow **/
+    private final int burstCapacity;
+    /** Lua script**/
+    private String script;
+
+    public RedisRateLimiter(RedisTemplate redisTemplate, String redisKeyPrefix,
+                            int replenishRate) {
+        this(redisTemplate, redisKeyPrefix, replenishRate, replenishRate);
     }
 
-    public void testRateLimit() {
+    public RedisRateLimiter(RedisTemplate redisTemplate, String redisKeyPrefix,
+                            int replenishRate, int burstCapacity) {
+        this.redisTemplate = redisTemplate;
+        this.redisKeyPrefix = redisKeyPrefix;
+        this.replenishRate = replenishRate;
+        this.burstCapacity = burstCapacity;
+        this.script = loadScript();
+    }
 
-        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("classpath:spring-redis.xml");
-
-        RedisTemplate redisTemplate = (RedisTemplate) context.getBean("redisTemplate");
-
-        Long userId = 15L;
+    public Response acquire(String id, int permits) {
         // Make a unique key per user.
-        String prefix = "request_rate_limiter.{" + userId+"}";
-
-        //How many requests per second do you want a user to be allowed to do?
-        Long replenishRate = 10L;
-        //How much bursting do you want to allow
-        Long burstCapacity = 2 * replenishRate;
+        String prefix = redisKeyPrefix+".{" + id+"}";
 
         // You need two Redis keys for Token Bucket.
         List<String> keys = Arrays.asList(prefix + ".tokens", prefix + ".timestamp");
         // The arguments to the LUA script. time() returns unixtime in seconds.
-        List<String> scriptArgs = Arrays.asList(replenishRate + "", burstCapacity + "", Instant.now().getEpochSecond() + "", "1");
+        List<String> scriptArgs = Arrays.asList(replenishRate + "", burstCapacity + "", Instant.now().getEpochSecond() + "", permits+"");
 
-        String script = loadScript();
-
-        for (int i=0; i<50; i++) {
-            //返回数组结果，[是否获取令牌成功, 剩余令牌数]
-            List<Long> result = (List<Long>) redisTemplate.eval(script, keys, scriptArgs);
-            System.out.println(result);
+        List<Long> results;
+        try {
+            //执行 Redis Lua 脚本，获取令牌。返回结果为 [是否获取令牌成功, 剩余令牌数] ，其中，1 代表获取令牌成功，0 代表令牌获取失败。
+            results = (List<Long>) redisTemplate.eval(script, keys, scriptArgs);
+        } catch (Exception e) {
+            //当 Redis Lua 脚本过程中发生异常，忽略异常，返回 Arrays.asList(1L, -1L) ，即认为获取令牌成功。
+            // 为什么？在 Redis 发生故障时，我们不希望限流器对 Reids 是强依赖，并且 Redis 发生故障的概率本身就很低。
+            results = Arrays.asList(1L, -1L);
         }
+        boolean allowed = results.get(0) == 1L;
+        Long tokensLeft = results.get(1);
+        Response response = new Response(allowed, tokensLeft);
+        return response;
     }
 
     private String loadScript() {
@@ -70,7 +85,7 @@ public class RedisRateLimiterDemo {
             BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
 
             String separator = System.getProperty("line.separator");
-            System.out.println("分隔符："+separator);
+
             StringBuilder sb = new StringBuilder(2048);
             String line = null;
             while ((line=br.readLine()) !=null) {
@@ -82,14 +97,11 @@ public class RedisRateLimiterDemo {
         }
         return null;
     }
-
 }
 
 ```
 
-
-
-### 3. Redis Lua 脚本
+### 2. Redis Lua 脚本
 ```META-INF/scripts/request_rate_limiter.lua```，Redis Lua 脚本，实现基于令牌桶算法实现限流。代码如下 ：
 ```
 local tokens_key = KEYS[1]
@@ -150,46 +162,102 @@ return { allowed_num, new_tokens }
 * 第 35 行 ：返回数组结果，[是否获取令牌成功, 剩余令牌数] 。
 
 
-
-附上Stripe的[Request rate limiter](https://gist.github.com/ptarjan/e38f45f2dfe601419ca3af937fff574d) 原始脚本 ：
+### RedisRateLimiter测试
 ```
-local tokens_key = KEYS[1]
-local timestamp_key = KEYS[2]
+package demo.redis;
 
-local rate = tonumber(ARGV[1])
-local capacity = tonumber(ARGV[2])
-local now = tonumber(ARGV[3])
-local requested = tonumber(ARGV[4])
+import redis.ratelimit.RedisRateLimiter;
+import redis.ratelimit.Response;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import pandora.core.util.JsonUtils;
+import pandora.redis.RedisTemplate;
 
-local fill_time = capacity/rate
-local ttl = math.floor(fill_time*2)
+/**
+ * @author Ricky Fung<br/>
+ * Created on 2018-04-11<br/>
+ */
+public class RedisRateLimiterDemo {
 
-local last_tokens = tonumber(redis.call("get", tokens_key))
-if last_tokens == nil then
-  last_tokens = capacity
-end
+    public static void main(String[] args) {
 
-local last_refreshed = tonumber(redis.call("get", timestamp_key))
-if last_refreshed == nil then
-  last_refreshed = 0
-end
+        new RedisRateLimiterDemo().testRateLimit();
+    }
 
-local delta = math.max(0, now-last_refreshed)
-local filled_tokens = math.min(capacity, last_tokens+(delta*rate))
-local allowed = filled_tokens >= requested
-local new_tokens = filled_tokens
-if allowed then
-  new_tokens = filled_tokens - requested
-end
+    public void testRateLimit() {
 
-redis.call("setex", tokens_key, ttl, new_tokens)
-redis.call("setex", timestamp_key, ttl, now)
+        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("classpath:spring-redis.xml");
 
-return { allowed, new_tokens }
+        RedisTemplate redisTemplate = (RedisTemplate) context.getBean("redisTemplate");
+
+        String userId = "15";
+        String keyPrefix = "request_rate_limiter";
+        RedisRateLimiter redisRateLimiter = new RedisRateLimiter(redisTemplate, keyPrefix, 20, 30);
+
+        for (int i=0; i<50; i++) {
+            Response response = redisRateLimiter.acquire(userId, 1);
+            System.out.println(JsonUtils.toJson(response));
+        }
+    }
+
+}
+
 ```
-
+打印结果:
+```
+{"allowed":true,"tokensRemaining":29}
+{"allowed":true,"tokensRemaining":28}
+{"allowed":true,"tokensRemaining":27}
+{"allowed":true,"tokensRemaining":26}
+{"allowed":true,"tokensRemaining":25}
+{"allowed":true,"tokensRemaining":24}
+{"allowed":true,"tokensRemaining":23}
+{"allowed":true,"tokensRemaining":22}
+{"allowed":true,"tokensRemaining":21}
+{"allowed":true,"tokensRemaining":20}
+{"allowed":true,"tokensRemaining":19}
+{"allowed":true,"tokensRemaining":18}
+{"allowed":true,"tokensRemaining":17}
+{"allowed":true,"tokensRemaining":16}
+{"allowed":true,"tokensRemaining":15}
+{"allowed":true,"tokensRemaining":14}
+{"allowed":true,"tokensRemaining":13}
+{"allowed":true,"tokensRemaining":12}
+{"allowed":true,"tokensRemaining":11}
+{"allowed":true,"tokensRemaining":10}
+{"allowed":true,"tokensRemaining":9}
+{"allowed":true,"tokensRemaining":8}
+{"allowed":true,"tokensRemaining":7}
+{"allowed":true,"tokensRemaining":6}
+{"allowed":true,"tokensRemaining":5}
+{"allowed":true,"tokensRemaining":4}
+{"allowed":true,"tokensRemaining":3}
+{"allowed":true,"tokensRemaining":2}
+{"allowed":true,"tokensRemaining":1}
+{"allowed":true,"tokensRemaining":0}
+{"allowed":false,"tokensRemaining":0}
+{"allowed":false,"tokensRemaining":0}
+{"allowed":false,"tokensRemaining":0}
+{"allowed":false,"tokensRemaining":0}
+{"allowed":false,"tokensRemaining":0}
+{"allowed":false,"tokensRemaining":0}
+{"allowed":false,"tokensRemaining":0}
+{"allowed":false,"tokensRemaining":0}
+{"allowed":false,"tokensRemaining":0}
+{"allowed":false,"tokensRemaining":0}
+{"allowed":false,"tokensRemaining":0}
+{"allowed":false,"tokensRemaining":0}
+{"allowed":false,"tokensRemaining":0}
+{"allowed":false,"tokensRemaining":0}
+{"allowed":false,"tokensRemaining":0}
+{"allowed":false,"tokensRemaining":0}
+{"allowed":false,"tokensRemaining":0}
+{"allowed":false,"tokensRemaining":0}
+{"allowed":false,"tokensRemaining":0}
+{"allowed":false,"tokensRemaining":0}
+```
 
 
 ## 参考资料
-[Scaling your API with rate limiters](https://stripe.com/blog/rate-limiters)
-[Spring-Cloud-Gateway 源码解析 —— 过滤器 (4.10) 之 RequestRateLimiterGatewayFilterFactory 请求限流](http://www.iocoder.cn/Spring-Cloud-Gateway/filter-request-rate-limiter/)
+* [Scaling your API with rate limiters](https://stripe.com/blog/rate-limiters)
+* [Scaling your API with rate limiters Lua Scripts](https://gist.github.com/ptarjan/e38f45f2dfe601419ca3af937fff574d)
+* [Spring-Cloud-Gateway 源码解析 —— 过滤器 (4.10) 之 RequestRateLimiterGatewayFilterFactory 请求限流](http://www.iocoder.cn/Spring-Cloud-Gateway/filter-request-rate-limiter/)
