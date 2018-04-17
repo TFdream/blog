@@ -20,7 +20,8 @@ public class SpringApp {
         System.out.println(exampleBean);
     }
 }
-``
+```
+
 applicationContext.xml
 ```
 <?xml version="1.0" encoding="UTF-8"?>
