@@ -49,6 +49,12 @@ ClassPathXmlApplicationContext继承层次关系如下：
 ```
 public class ClassPathXmlApplicationContext extends AbstractXmlApplicationContext {
 
+	/**
+	 * Create a new ClassPathXmlApplicationContext, loading the definitions
+	 * from the given XML file and automatically refreshing the context.
+	 * @param configLocation resource location
+	 * @throws BeansException if context creation failed
+	 */
 	public ClassPathXmlApplicationContext(String configLocation) throws BeansException {
 		this(new String[] {configLocation}, true, null);
 	}
@@ -68,81 +74,80 @@ public class ClassPathXmlApplicationContext extends AbstractXmlApplicationContex
 			throws BeansException {
 
 		super(parent);
-    //设置配置文件位置
 		setConfigLocations(configLocations);
 		if (refresh) {
-      //初始化Spring容器
 			refresh();
 		}
 	}
+}
 ```
 
 refresh方法继承自```org.springframework.context.support.AbstractApplicationContext```类，如下：
 ```
-	@Override
-	public void refresh() throws BeansException, IllegalStateException {
-		synchronized (this.startupShutdownMonitor) {
-			// Prepare this context for refreshing.
-			prepareRefresh();
+@Override
+public void refresh() throws BeansException, IllegalStateException {
+	synchronized (this.startupShutdownMonitor) {
+		// Prepare this context for refreshing.
+		prepareRefresh();
 
-			// Tell the subclass to refresh the internal bean factory.
-			ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();
+		// Tell the subclass to refresh the internal bean factory.
+		ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();
 
-			// Prepare the bean factory for use in this context.
-			prepareBeanFactory(beanFactory);
+		// Prepare the bean factory for use in this context.
+		prepareBeanFactory(beanFactory);
 
-			try {
-				// Allows post-processing of the bean factory in context subclasses.
-				postProcessBeanFactory(beanFactory);
+		try {
+			// Allows post-processing of the bean factory in context subclasses.
+			postProcessBeanFactory(beanFactory);
 
-				// Invoke factory processors registered as beans in the context.
-				invokeBeanFactoryPostProcessors(beanFactory);
+			// Invoke factory processors registered as beans in the context.
+			invokeBeanFactoryPostProcessors(beanFactory);
 
-				// Register bean processors that intercept bean creation.
-				registerBeanPostProcessors(beanFactory);
+			// Register bean processors that intercept bean creation.
+			registerBeanPostProcessors(beanFactory);
 
-				// Initialize message source for this context.
-				initMessageSource();
+			// Initialize message source for this context.
+			initMessageSource();
 
-				// Initialize event multicaster for this context.
-				initApplicationEventMulticaster();
+			// Initialize event multicaster for this context.
+			initApplicationEventMulticaster();
 
-				// Initialize other special beans in specific context subclasses.
-				onRefresh();
+			// Initialize other special beans in specific context subclasses.
+			onRefresh();
 
-				// Check for listener beans and register them.
-				registerListeners();
+			// Check for listener beans and register them.
+			registerListeners();
 
-				// Instantiate all remaining (non-lazy-init) singletons.
-				finishBeanFactoryInitialization(beanFactory);
+			// Instantiate all remaining (non-lazy-init) singletons.
+			finishBeanFactoryInitialization(beanFactory);
 
-				// Last step: publish corresponding event.
-				finishRefresh();
+			// Last step: publish corresponding event.
+			finishRefresh();
+		}
+
+		catch (BeansException ex) {
+			if (logger.isWarnEnabled()) {
+				logger.warn("Exception encountered during context initialization - " +
+						"cancelling refresh attempt: " + ex);
 			}
 
-			catch (BeansException ex) {
-				if (logger.isWarnEnabled()) {
-					logger.warn("Exception encountered during context initialization - " +
-							"cancelling refresh attempt: " + ex);
-				}
+			// Destroy already created singletons to avoid dangling resources.
+			destroyBeans();
 
-				// Destroy already created singletons to avoid dangling resources.
-				destroyBeans();
+			// Reset 'active' flag.
+			cancelRefresh(ex);
 
-				// Reset 'active' flag.
-				cancelRefresh(ex);
+			// Propagate exception to caller.
+			throw ex;
+		}
 
-				// Propagate exception to caller.
-				throw ex;
-			}
-
-			finally {
-				// Reset common introspection caches in Spring's core, since we
-				// might not ever need metadata for singleton beans anymore...
-				resetCommonCaches();
-			}
+		finally {
+			// Reset common introspection caches in Spring's core, since we
+			// might not ever need metadata for singleton beans anymore...
+			resetCommonCaches();
 		}
 	}
+}
 ```
 
 
