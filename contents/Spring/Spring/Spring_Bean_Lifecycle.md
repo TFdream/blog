@@ -3,7 +3,6 @@
 此处，可以借鉴Java EE中Servlet的生命周期，实例化、初始init、接收请求service、销毁destroy。
 
 ### Spring Bean的生命周期概述
-Spring Bean生命周期如下：
 1. 实例化BeanFactoryPostProcessor接口实现类；
 2. 执行BeanFactoryPostProcessor的postProcessBeanFactory方法；
 3. 实例化BeanPostProcessor接口实现类；
@@ -26,4 +25,4 @@ Spring Bean生命周期如下：
 19. 调用<bean>中的destroy-method指定的销毁方法。
 
 ### Spring Bean生命周期流程图
-Spring Bean的生命周期流程图
+
