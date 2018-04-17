@@ -220,3 +220,9 @@ public final ConfigurableListableBeanFactory getBeanFactory() {
 	}
 }
 ```
+
+通过createBeanFactory方法，可以我们知道创建的BeanFactory实例是```org.springframework.beans.factory.support.DefaultListableBeanFactory```，DefaultListableBeanFactory类的继承层次关系如下图：
+![DefaultListableBeanFactory_hierarchical_structure](https://github.com/TFdream/blog/blob/master/docs/image/Spring/DefaultListableBeanFactory.png)
+
+
+
