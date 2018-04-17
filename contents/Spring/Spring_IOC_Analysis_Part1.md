@@ -42,6 +42,9 @@ applicationContext.xml
 接下来，我们分析一下```org.springframework.context.support.ClassPathXmlApplicationContext```。
 
 ### ClassPathXmlApplicationContext
+ClassPathXmlApplicationContext继承层次关系如下：
+![](https://github.com/TFdream/blog/blob/master/docs/image/Spring/ClassPathXmlApplicationContext.png)
+
 1. 构造方法
 ```
 public class ClassPathXmlApplicationContext extends AbstractXmlApplicationContext {
