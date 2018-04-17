@@ -150,4 +150,73 @@ public void refresh() throws BeansException, IllegalStateException {
 }
 ```
 
+obtainFreshBeanFactory()方法如下：
+```
+/**
+ * Tell the subclass to refresh the internal bean factory.
+ * @return the fresh BeanFactory instance
+ * @see #refreshBeanFactory()
+ * @see #getBeanFactory()
+ */
+protected ConfigurableListableBeanFactory obtainFreshBeanFactory() {
+	refreshBeanFactory();
+	ConfigurableListableBeanFactory beanFactory = getBeanFactory();
+	if (logger.isDebugEnabled()) {
+		logger.debug("Bean factory for " + getDisplayName() + ": " + beanFactory);
+	}
+	return beanFactory;
+}
+```
+这里的 refreshBeanFactory()和getBeanFactory()方法实现在```org.springframework.context.support.AbstractRefreshableApplicationContext```类中，如下：
 
+```
+/**
+ * This implementation performs an actual refresh of this context's underlying
+ * bean factory, shutting down the previous bean factory (if any) and
+ * initializing a fresh bean factory for the next phase of the context's lifecycle.
+ */
+@Override
+protected final void refreshBeanFactory() throws BeansException {
+	if (hasBeanFactory()) {
+		destroyBeans();
+		closeBeanFactory();
+	}
+	try {
+		DefaultListableBeanFactory beanFactory = createBeanFactory();
+		beanFactory.setSerializationId(getId());
+		customizeBeanFactory(beanFactory);
+		loadBeanDefinitions(beanFactory);
+		synchronized (this.beanFactoryMonitor) {
+			this.beanFactory = beanFactory;
+		}
+	}
+	catch (IOException ex) {
+		throw new ApplicationContextException("I/O error parsing bean definition source for " + getDisplayName(), ex);
+	}
+}
+
+/**
+ * Determine whether this context currently holds a bean factory,
+ * i.e. has been refreshed at least once and not been closed yet.
+ */
+protected final boolean hasBeanFactory() {
+	synchronized (this.beanFactoryMonitor) {
+		return (this.beanFactory != null);
+	}
+}
+
+protected DefaultListableBeanFactory createBeanFactory() {
+	return new DefaultListableBeanFactory(getInternalParentBeanFactory());
+}
+
+@Override
+public final ConfigurableListableBeanFactory getBeanFactory() {
+	synchronized (this.beanFactoryMonitor) {
+		if (this.beanFactory == null) {
+			throw new IllegalStateException("BeanFactory not initialized or already closed - " +
+					"call 'refresh' before accessing beans via the ApplicationContext");
+		}
+		return this.beanFactory;
+	}
+}
+```
