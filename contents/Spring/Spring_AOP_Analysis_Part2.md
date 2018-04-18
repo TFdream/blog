@@ -3,71 +3,70 @@
 
 上篇中负责解析<aop:config> 标签ConfigBeanDefinitionParser中的configureAutoProxyCreator方法如下：
 ```
-	private void configureAutoProxyCreator(ParserContext parserContext, Element element) {
-		AopNamespaceUtils.registerAspectJAutoProxyCreatorIfNecessary(parserContext, element);
-	}
+private void configureAutoProxyCreator(ParserContext parserContext, Element element) {
+	AopNamespaceUtils.registerAspectJAutoProxyCreatorIfNecessary(parserContext, element);
+}
 ```
 
 AopNamespaceUtils的registerAspectJAutoProxyCreatorIfNecessary方法如下：
 ```
+public static void registerAspectJAutoProxyCreatorIfNecessary(
+		ParserContext parserContext, Element sourceElement) {
 
-	public static void registerAspectJAutoProxyCreatorIfNecessary(
-			ParserContext parserContext, Element sourceElement) {
+	BeanDefinition beanDefinition = AopConfigUtils.registerAspectJAutoProxyCreatorIfNecessary(
+			parserContext.getRegistry(), parserContext.extractSource(sourceElement));
+	useClassProxyingIfNecessary(parserContext.getRegistry(), sourceElement);
+	registerComponentIfNecessary(beanDefinition, parserContext);
+}
 
-		BeanDefinition beanDefinition = AopConfigUtils.registerAspectJAutoProxyCreatorIfNecessary(
-				parserContext.getRegistry(), parserContext.extractSource(sourceElement));
-		useClassProxyingIfNecessary(parserContext.getRegistry(), sourceElement);
-		registerComponentIfNecessary(beanDefinition, parserContext);
-	}
-
-	private static void useClassProxyingIfNecessary(BeanDefinitionRegistry registry, Element sourceElement) {
-		if (sourceElement != null) {
-			boolean proxyTargetClass = Boolean.valueOf(sourceElement.getAttribute(PROXY_TARGET_CLASS_ATTRIBUTE));
-			if (proxyTargetClass) {
-				AopConfigUtils.forceAutoProxyCreatorToUseClassProxying(registry);
-			}
-			boolean exposeProxy = Boolean.valueOf(sourceElement.getAttribute(EXPOSE_PROXY_ATTRIBUTE));
-			if (exposeProxy) {
-				AopConfigUtils.forceAutoProxyCreatorToExposeProxy(registry);
-			}
+private static void useClassProxyingIfNecessary(BeanDefinitionRegistry registry, Element sourceElement) {
+	if (sourceElement != null) {
+		boolean proxyTargetClass = Boolean.valueOf(sourceElement.getAttribute(PROXY_TARGET_CLASS_ATTRIBUTE));
+		if (proxyTargetClass) {
+			AopConfigUtils.forceAutoProxyCreatorToUseClassProxying(registry);
+		}
+		boolean exposeProxy = Boolean.valueOf(sourceElement.getAttribute(EXPOSE_PROXY_ATTRIBUTE));
+		if (exposeProxy) {
+			AopConfigUtils.forceAutoProxyCreatorToExposeProxy(registry);
 		}
 	}
+}
 
-	private static void registerComponentIfNecessary(BeanDefinition beanDefinition, ParserContext parserContext) {
-		if (beanDefinition != null) {
-			BeanComponentDefinition componentDefinition =
-					new BeanComponentDefinition(beanDefinition, AopConfigUtils.AUTO_PROXY_CREATOR_BEAN_NAME);
-			parserContext.registerComponent(componentDefinition);
-		}
+private static void registerComponentIfNecessary(BeanDefinition beanDefinition, ParserContext parserContext) {
+	if (beanDefinition != null) {
+		BeanComponentDefinition componentDefinition =
+				new BeanComponentDefinition(beanDefinition, AopConfigUtils.AUTO_PROXY_CREATOR_BEAN_NAME);
+		parserContext.registerComponent(componentDefinition);
 	}
+}
 ```
 
 其中AopConfigUtils的registerAspectJAutoProxyCreatorIfNecessary方法如下：
 ```
-	public static BeanDefinition registerAspectJAutoProxyCreatorIfNecessary(BeanDefinitionRegistry registry, Object source) {
-		return registerOrEscalateApcAsRequired(AspectJAwareAdvisorAutoProxyCreator.class, registry, source);
-	}
-	
-	private static BeanDefinition registerOrEscalateApcAsRequired(Class<?> cls, BeanDefinitionRegistry registry, Object source) {
-		Assert.notNull(registry, "BeanDefinitionRegistry must not be null");
-		if (registry.containsBeanDefinition(AUTO_PROXY_CREATOR_BEAN_NAME)) {
-			BeanDefinition apcDefinition = registry.getBeanDefinition(AUTO_PROXY_CREATOR_BEAN_NAME);
-			if (!cls.getName().equals(apcDefinition.getBeanClassName())) {
-				int currentPriority = findPriorityForClass(apcDefinition.getBeanClassName());
-				int requiredPriority = findPriorityForClass(cls);
-				if (currentPriority < requiredPriority) {
-					apcDefinition.setBeanClassName(cls.getName());
-				}
+public static BeanDefinition registerAspectJAutoProxyCreatorIfNecessary(BeanDefinitionRegistry registry, Object source) {
+	return registerOrEscalateApcAsRequired(AspectJAwareAdvisorAutoProxyCreator.class, registry, source);
+}
+
+private static BeanDefinition registerOrEscalateApcAsRequired(Class<?> cls, BeanDefinitionRegistry registry, Object source) {
+	Assert.notNull(registry, "BeanDefinitionRegistry must not be null");
+	if (registry.containsBeanDefinition(AUTO_PROXY_CREATOR_BEAN_NAME)) {
+		BeanDefinition apcDefinition = registry.getBeanDefinition(AUTO_PROXY_CREATOR_BEAN_NAME);
+		if (!cls.getName().equals(apcDefinition.getBeanClassName())) {
+			int currentPriority = findPriorityForClass(apcDefinition.getBeanClassName());
+			int requiredPriority = findPriorityForClass(cls);
+			if (currentPriority < requiredPriority) {
+				apcDefinition.setBeanClassName(cls.getName());
 			}
-			return null;
 		}
-		RootBeanDefinition beanDefinition = new RootBeanDefinition(cls);
-		beanDefinition.setSource(source);
-		beanDefinition.getPropertyValues().add("order", Ordered.HIGHEST_PRECEDENCE);
-		beanDefinition.setRole(BeanDefinition.ROLE_INFRASTRUCTURE);
-		registry.registerBeanDefinition(AUTO_PROXY_CREATOR_BEAN_NAME, beanDefinition);
-		return beanDefinition;
+		return null;
 	}
+	RootBeanDefinition beanDefinition = new RootBeanDefinition(cls);
+	beanDefinition.setSource(source);
+	beanDefinition.getPropertyValues().add("order", Ordered.HIGHEST_PRECEDENCE);
+	beanDefinition.setRole(BeanDefinition.ROLE_INFRASTRUCTURE);
+	registry.registerBeanDefinition(AUTO_PROXY_CREATOR_BEAN_NAME, beanDefinition);
+	return beanDefinition;
+}
 ```
 
 ```org.springframework.aop.aspectj.autoproxy.AspectJAwareAdvisorAutoProxyCreator```这个类是Spring提供给开发者的AOP的核心类，就是AspectJAwareAdvisorAutoProxyCreator完成了【类/接口-->代理】的转换过程，首先我们看一下AspectJAwareAdvisorAutoProxyCreator的层次结构：
@@ -83,54 +82,90 @@ AopNamespaceUtils的registerAspectJAutoProxyCreatorIfNecessary方法如下：
 
 
 ### 判断是否为<bean>生成代理对象
-上文分析了Bean生成代理的时机是在每个Bean初始化之后，下面把代码定位到Bean初始化之后，AbstractAutoProxyCreator的
+上文分析了Bean生成代理的时机是在每个Bean初始化之后，下面把代码定位到Bean初始化之后，AbstractAutoProxyCreator的postProcessAfterInitialization方法，代码如下：
 ```
-	/**
-	 * Create a proxy with the configured interceptors if the bean is
-	 * identified as one to proxy by the subclass.
-	 * @see #getAdvicesAndAdvisorsForBean
-	 */
-	@Override
-	public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-		if (bean != null) {
-			Object cacheKey = getCacheKey(bean.getClass(), beanName);
-			if (!this.earlyProxyReferences.contains(cacheKey)) {
-				return wrapIfNecessary(bean, beanName, cacheKey);
-			}
+/**
+ * Create a proxy with the configured interceptors if the bean is
+ * identified as one to proxy by the subclass.
+ * @see #getAdvicesAndAdvisorsForBean
+ */
+@Override
+public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
+	if (bean != null) {
+		Object cacheKey = getCacheKey(bean.getClass(), beanName);
+		if (!this.earlyProxyReferences.contains(cacheKey)) {
+			return wrapIfNecessary(bean, beanName, cacheKey);
 		}
+	}
+	return bean;
+}
+```
+
+AbstractAutoProxyCreator的wrapIfNecessary方法如下：
+```
+protected Object wrapIfNecessary(Object bean, String beanName, Object cacheKey) {
+	if (beanName != null && this.targetSourcedBeans.contains(beanName)) {
 		return bean;
 	}
-```
-
-wrapIfNecessary方法：
-```
-	protected Object wrapIfNecessary(Object bean, String beanName, Object cacheKey) {
-		if (beanName != null && this.targetSourcedBeans.contains(beanName)) {
-			return bean;
-		}
-		if (Boolean.FALSE.equals(this.advisedBeans.get(cacheKey))) {
-			return bean;
-		}
-		if (isInfrastructureClass(bean.getClass()) || shouldSkip(bean.getClass(), beanName)) {
-			this.advisedBeans.put(cacheKey, Boolean.FALSE);
-			return bean;
-		}
-
-		// Create proxy if we have advice.
-		Object[] specificInterceptors = getAdvicesAndAdvisorsForBean(bean.getClass(), beanName, null);
-		if (specificInterceptors != DO_NOT_PROXY) {
-			this.advisedBeans.put(cacheKey, Boolean.TRUE);
-			Object proxy = createProxy(
-					bean.getClass(), beanName, specificInterceptors, new SingletonTargetSource(bean));
-			this.proxyTypes.put(cacheKey, proxy.getClass());
-			return proxy;
-		}
-
+	if (Boolean.FALSE.equals(this.advisedBeans.get(cacheKey))) {
+		return bean;
+	}
+	if (isInfrastructureClass(bean.getClass()) || shouldSkip(bean.getClass(), beanName)) {
 		this.advisedBeans.put(cacheKey, Boolean.FALSE);
 		return bean;
 	}
+
+	// Create proxy if we have advice.
+	Object[] specificInterceptors = getAdvicesAndAdvisorsForBean(bean.getClass(), beanName, null);
+	if (specificInterceptors != DO_NOT_PROXY) {
+		this.advisedBeans.put(cacheKey, Boolean.TRUE);
+		Object proxy = createProxy(
+				bean.getClass(), beanName, specificInterceptors, new SingletonTargetSource(bean));
+		this.proxyTypes.put(cacheKey, proxy.getClass());
+		return proxy;
+	}
+
+	this.advisedBeans.put(cacheKey, Boolean.FALSE);
+	return bean;
+}
 ```
-哪些目标对象需要生成代理？判断逻辑在AbstractAdvisorAutoProxyCreator类的getAdvicesAndAdvisorsForBean方法：
+
+哪些目标对象需要生成代理？只要getAdvicesAndAdvisorsForBean方法返回的Advisor数组不为空，那么就会通过createProxy方法为<bean>创建代理，代码如下：
+```
+protected Object createProxy(
+		Class<?> beanClass, String beanName, Object[] specificInterceptors, TargetSource targetSource) {
+
+	if (this.beanFactory instanceof ConfigurableListableBeanFactory) {
+		AutoProxyUtils.exposeTargetClass((ConfigurableListableBeanFactory) this.beanFactory, beanName, beanClass);
+	}
+
+	ProxyFactory proxyFactory = new ProxyFactory();
+	proxyFactory.copyFrom(this);
+
+	if (!proxyFactory.isProxyTargetClass()) {
+		if (shouldProxyTargetClass(beanClass, beanName)) {
+			proxyFactory.setProxyTargetClass(true);
+		}
+		else {
+			evaluateProxyInterfaces(beanClass, proxyFactory);
+		}
+	}
+
+	Advisor[] advisors = buildAdvisors(beanName, specificInterceptors);
+	proxyFactory.addAdvisors(advisors);
+	proxyFactory.setTargetSource(targetSource);
+	customizeProxyFactory(proxyFactory);
+
+	proxyFactory.setFrozen(this.freezeProxy);
+	if (advisorsPreFiltered()) {
+		proxyFactory.setPreFiltered(true);
+	}
+
+	return proxyFactory.getProxy(getProxyClassLoader());
+}
+```
+
+AbstractAutoProxyCreator的wrapIfNecessary方法是否需要生成代理，getAdvicesAndAdvisorsForBean代码如下：
 ```
 @Override
 protected Object[] getAdvicesAndAdvisorsForBean(Class<?> beanClass, String beanName, TargetSource targetSource) {
