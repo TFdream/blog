@@ -130,42 +130,7 @@ protected Object wrapIfNecessary(Object bean, String beanName, Object cacheKey) 
 }
 ```
 
-哪些目标对象需要生成代理？只要getAdvicesAndAdvisorsForBean方法返回的Advisor数组不为空，那么就会通过createProxy方法为<bean>创建代理，代码如下：
-```
-protected Object createProxy(
-		Class<?> beanClass, String beanName, Object[] specificInterceptors, TargetSource targetSource) {
-
-	if (this.beanFactory instanceof ConfigurableListableBeanFactory) {
-		AutoProxyUtils.exposeTargetClass((ConfigurableListableBeanFactory) this.beanFactory, beanName, beanClass);
-	}
-
-	ProxyFactory proxyFactory = new ProxyFactory();
-	proxyFactory.copyFrom(this);
-
-	if (!proxyFactory.isProxyTargetClass()) {
-		if (shouldProxyTargetClass(beanClass, beanName)) {
-			proxyFactory.setProxyTargetClass(true);
-		}
-		else {
-			evaluateProxyInterfaces(beanClass, proxyFactory);
-		}
-	}
-
-	Advisor[] advisors = buildAdvisors(beanName, specificInterceptors);
-	proxyFactory.addAdvisors(advisors);
-	proxyFactory.setTargetSource(targetSource);
-	customizeProxyFactory(proxyFactory);
-
-	proxyFactory.setFrozen(this.freezeProxy);
-	if (advisorsPreFiltered()) {
-		proxyFactory.setPreFiltered(true);
-	}
-
-	return proxyFactory.getProxy(getProxyClassLoader());
-}
-```
-
-AbstractAutoProxyCreator的wrapIfNecessary方法是否需要生成代理，getAdvicesAndAdvisorsForBean代码如下：
+哪些目标对象需要生成代理？只要getAdvicesAndAdvisorsForBean方法返回的Advisor数组不为空则生成代理，getAdvicesAndAdvisorsForBean代码如下：
 ```
 @Override
 protected Object[] getAdvicesAndAdvisorsForBean(Class<?> beanClass, String beanName, TargetSource targetSource) {
@@ -302,3 +267,107 @@ public static boolean canApply(Pointcut pc, Class<?> targetClass, boolean hasInt
 * 目标类中的方法必须满足expression的匹配规则，当然这里方法不是全部需要满足expression的匹配规则，有一个方法满足即可
 
 如果以上两条都满足，那么容器则会判断该<bean>满足条件，需要被生成代理对象，具体方式为返回一个数组对象，该数组对象中存储的是<bean>对应的Advisor。
+
+### 生成代理对象
+回到AbstractAutoProxyCreator的wrapIfNecessary方法，只要Advisor数组不为空那么就会通过createProxy方法为<bean>创建代理，代码如下：
+```
+protected Object createProxy(
+		Class<?> beanClass, String beanName, Object[] specificInterceptors, TargetSource targetSource) {
+
+	if (this.beanFactory instanceof ConfigurableListableBeanFactory) {
+		AutoProxyUtils.exposeTargetClass((ConfigurableListableBeanFactory) this.beanFactory, beanName, beanClass);
+	}
+
+	ProxyFactory proxyFactory = new ProxyFactory();
+	proxyFactory.copyFrom(this);
+
+	if (!proxyFactory.isProxyTargetClass()) {
+		if (shouldProxyTargetClass(beanClass, beanName)) {
+			proxyFactory.setProxyTargetClass(true);
+		}
+		else {
+			evaluateProxyInterfaces(beanClass, proxyFactory);
+		}
+	}
+
+	Advisor[] advisors = buildAdvisors(beanName, specificInterceptors);
+	proxyFactory.addAdvisors(advisors);
+	proxyFactory.setTargetSource(targetSource);
+	customizeProxyFactory(proxyFactory);
+
+	proxyFactory.setFrozen(this.freezeProxy);
+	if (advisorsPreFiltered()) {
+		proxyFactory.setPreFiltered(true);
+	}
+
+	return proxyFactory.getProxy(getProxyClassLoader());
+}
+```
+
+判断的内容是<aop:config>这个节点中proxy-target-class="false"或者proxy-target-class不配置，即不使用CGLIB生成代理。如果满足条件，进判断，获取当前Bean实现的所有接口，讲这些接口Class对象都添加到ProxyFactory中。
+
+ProxyFactory顾名思义，代理工厂的意思，ProxyFactory类的getProxy方法如下：
+```
+public Object getProxy() {
+	return createAopProxy().getProxy();
+}
+```
+
+主要做了两件事情：
+* 创建AopProxy接口实现类；
+* 通过AopProxy接口的实现类的getProxy方法获取<bean>对应的代理。
+
+就从这两个点出发，分两部分分析一下。
+
+### 代理对象实例化----创建AopProxy接口实现类
+看一下createAopProxy()方法的实现，它位于ProxyCreatorSupport类中：
+```
+protected final synchronized AopProxy createAopProxy() {
+	if (!this.active) {
+		activate();
+	}
+	return getAopProxyFactory().createAopProxy(this);
+}
+```
+AopProxyFactory接口只有一个默认的实现类：DefaultAopProxyFactory，直接查看DefaultAopProxyFactory的createAopProxy方法：
+```
+public AopProxy createAopProxy(AdvisedSupport config) throws AopConfigException {
+	if (config.isOptimize() || config.isProxyTargetClass() || hasNoUserSuppliedProxyInterfaces(config)) {
+		Class<?> targetClass = config.getTargetClass();
+		if (targetClass == null) {
+			throw new AopConfigException("TargetSource cannot determine target class: " +
+					"Either an interface or a target is required for proxy creation.");
+		}
+		if (targetClass.isInterface() || Proxy.isProxyClass(targetClass)) {
+			return new JdkDynamicAopProxy(config);
+		}
+		return new ObjenesisCglibAopProxy(config);
+	}
+	else {
+		return new JdkDynamicAopProxy(config);
+	}
+}
+
+/**
+ * Determine whether the supplied {@link AdvisedSupport} has only the
+ * {@link org.springframework.aop.SpringProxy} interface specified
+ * (or no proxy interfaces specified at all).
+ */
+private boolean hasNoUserSuppliedProxyInterfaces(AdvisedSupport config) {
+	Class<?>[] ifcs = config.getProxiedInterfaces();
+	return (ifcs.length == 0 || (ifcs.length == 1 && SpringProxy.class.isAssignableFrom(ifcs[0])));
+}
+```
+平时我们说AOP原理三句话就能概括：
+* 对类生成代理使用CGLIB
+* 对接口生成代理使用JDK原生的Proxy
+* 可以通过配置文件（<aop:config proxy-target-class="true">）指定对接口使用CGLIB生成代理
+
+这三句话的出处就是createAopProxy方法。看到默认是第19行的代码使用JDK自带的Proxy生成代理，碰到以下三种情况例外：
+* ProxyConfig的isOptimize方法为true，这表示让Spring自己去优化而不是用户指定
+* ProxyConfig的isProxyTargetClass方法为true，这表示配置了proxy-target-class="true"
+* ProxyConfig满足hasNoUserSuppliedProxyInterfaces方法执行结果为true，这表示<bean>对象没有实现任何接口或者实现的接口是SpringProxy接口
+
+
+## 参考资料
+[【Spring源码分析】AOP源码解析（下篇）](http://www.cnblogs.com/xrq730/p/6757608.html)
