@@ -125,8 +125,155 @@ public class SelectSort {
 ```
 
 ### 4.堆排序
+对简单选择排序的优化。
+步骤：
+* 将序列构建成大顶堆。
+* 将根节点与最后一个节点交换，然后断开最后一个节点。
+* 重复第一、二步，直到所有节点断开。
+
+#### 代码实现
+```
+/**
+ * @author Ricky Fung
+ */
+public class HeapSort {
+
+    public static void main(String[] args) {
+
+        int[] arr = {9, 3, 5, 1, 6, 7, 10, 30, 4, 2, 11, 40};
+        ArrayUtils.printArray(arr);
+
+        HeapSort heapSort = new HeapSort();
+        heapSort.heapSort(arr);
+
+        ArrayUtils.printArray(arr);
+    }
+
+    public void heapSort(int[] arr) {
+        int length = arr.length;
+        //循环建堆
+        for(int i=0;i<length-1; i++){
+            //建堆
+            buildMaxHeap(arr, length-1-i);
+
+            //交换堆顶和最后一个元素
+            ArrayUtils.swap(arr,0, length-1-i);
+        }
+    }
+
+    //对data数组从0到lastIndex建大顶堆
+    private void buildMaxHeap(int[] data, int lastIndex) {
+        //从lastIndex处节点（最后一个节点）的父节点开始
+        for(int i=(lastIndex-1)/2;i>=0;i--){
+            //k保存正在判断的节点
+            int k=i;
+            //如果当前k节点的子节点存在
+            while(k*2+1<=lastIndex){
+                //k节点的左子节点的索引
+                int biggerIndex=2*k+1;
+                //如果biggerIndex小于lastIndex，即biggerIndex+1代表的k节点的右子节点存在
+                if(biggerIndex<lastIndex){
+                    //若果右子节点的值较大
+                    if(data[biggerIndex]<data[biggerIndex+1]){
+                        //biggerIndex总是记录较大子节点的索引
+                        biggerIndex++;
+                    }
+                }
+                //如果k节点的值小于其较大的子节点的值
+                if(data[k]<data[biggerIndex]){
+                    ArrayUtils.swap(data,k,biggerIndex);
+                    //将biggerIndex赋予k，开始while循环的下一次循环，重新保证k节点的值大于其左右子节点的值
+                    k=biggerIndex;
+                }else{
+                    break;
+                }
+            }
+        }
+    }
+}
+```
 
 ### 5.冒泡排序
+#### 基本思想
+
+在要排序的一组数中，对当前还未排好序的范围内的全部数，自上而下对相邻的两个数依次进行比较和调整，让较大的数往下沉，较小的往上冒。即：每当两相邻的数比较后发现它们的排序与排序要求相反时，就将它们互换。
+
+步骤：
+* 将序列中所有元素两两比较，将最大的放在最后面。
+* 将剩余序列中所有元素两两比较，将最大的放在最后面。
+* 重复第二步，直到只剩下一个数。
+
+#### 代码实现
+```
+/**
+ * @author Ricky Fung
+ */
+public class BubbleSort {
+
+    public static void main(String[] args) {
+        int[] arr = {9, 3, 5, 1, 6, 7, 10, 30, 4, 2, 11, 40};
+        ArrayUtils.printArray(arr);
+
+        BubbleSort bubbleSort = new BubbleSort();
+        bubbleSort.bubbleSort(arr);
+
+        ArrayUtils.printArray(arr);
+    }
+
+    public void bubbleSort(int[] arr){
+        int length = arr.length;
+        for(int i=0; i<length; i++){
+            for(int j=0; j<length-i-1; j++){
+                if(arr[j]>arr[j+1]){
+                    //交换两个元素位置
+                    ArrayUtils.swap(arr, j, j+1);
+                }
+            }
+        }
+    }
+
+}
+```
+
+#### 冒泡排序算法的改进
+
+对冒泡排序常见的改进方法是加入一标志性变量exchange，用于标志某一趟排序过程中是否有数据交换，如果进行某一趟排序时并没有进行数据交换，则说明数据已经按要求排列好，可立即结束排序，避免不必要的比较过程。
+
+设置一标志性变量pos,用于记录每趟排序中最后一次进行交换的位置。由于pos位置之后的记录均已交换到位,故在进行下一趟排序时只要扫描到pos位置即可。
+
+改进后算法如下:
+```
+/**
+ * @author Ricky Fung
+ */
+public class BubbleSort {
+
+    public static void main(String[] args) {
+        int[] arr = {9, 3, 5, 1, 6, 7, 10, 30, 4, 2, 11, 40};
+        ArrayUtils.printArray(arr);
+
+        BubbleSort bubbleSort = new BubbleSort();
+        bubbleSort.bubbleSort(arr);
+
+        ArrayUtils.printArray(arr);
+    }
+
+    public void bubbleSort(int[] arr){
+        int length = arr.length;
+        int i= length -1;  //初始时,最后位置保持不变
+        while ( i> 0) {
+            int pos= 0; //每趟开始时,无记录交换
+            for (int j= 0; j< i; j++)
+                if (arr[j]> arr[j+1]) {
+                    pos= j; //记录交换的位置
+                    ArrayUtils.swap(arr, j, j+1);
+                }
+            i= pos; //为下一趟排序作准备
+        }
+    }
+
+}
+```
 
 ### 6.快速排序
 
@@ -150,7 +297,7 @@ public class ArrayUtils {
         }
     }
 
-    public void swap(int[] arr, int i, int j) {
+    public static void swap(int[] arr, int i, int j) {
         if (i == j) {
             return;
         }
