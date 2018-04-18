@@ -276,8 +276,70 @@ public class BubbleSort {
 ```
 
 ### 6.快速排序
+#### 基本思想
+* 选择一个基准元素p（通常选择第一个元素或者最后一个元素），小于p的数放在左边，大于p的数放在右边；
+* 递归的将p左边和右边的数都按照第一步进行，直到不能递归。
+
+#### 时间复杂度
+快速排序是通常被认为在同数量级（O(nlog2n)）的排序方法中平均性能最好的。但若初始序列按关键码有序或基本有序时，快排序反而蜕化为冒泡排序。
+
+#### 代码实现
+1. 递归版本
+```
+package com.mindflow;
+
+/**
+ * @author Ricky Fung
+ */
+public class QuickSort {
+
+    public static void main(String[] args) {
+
+        int[] arr = {9, 3, 5, 1, 6, 7, 10, 30, 4, 2, 11, 40};
+        ArrayUtils.printArray(arr);
+
+        QuickSort quickSort = new QuickSort();
+        quickSort.quickSort(arr, 0, arr.length-1);
+
+        ArrayUtils.printArray(arr);
+    }
+
+    public static void quickSort(int[] arr, int low, int high) {
+        if (low < high) {
+            int pivot = arr[low]; // 选定的基准值（第一个数值作为基准值）
+            int pos = low;
+            for (int i = low + 1; i <= high; i++) {
+                if (arr[i] < pivot) {
+                    pos++;
+                    ArrayUtils.swap(arr, i, pos);
+                }
+            }
+            ArrayUtils.swap(arr, low, pos);
+            // 分而治之
+            quickSort(arr, low, pos - 1);// 排序左半部分
+            quickSort(arr, pos + 1, high);// 排序右半部分
+        }
+    }
+
+}
+
+```
+
+2. 非递归版本
+```
+
+```
 
 ### 7.归并排序
+速度仅次于快排，内存少的时候使用，可以进行并行计算的时候使用。
+
+#### 基本思想
+归并（Merge）排序法是将两个（或两个以上）有序表合并成一个新的有序表，即把待排序序列分为若干个子序列，每个子序列是有序的。然后再把有序子序列合并为整体有序序列。
+
+#### 代码实现
+```
+
+```
 
 ### ArrayUtils
 ```
