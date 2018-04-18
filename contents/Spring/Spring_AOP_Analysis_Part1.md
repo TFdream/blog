@@ -1,7 +1,7 @@
 
 ## Spring AOP源码解析（上篇）
 
-** 本文基于Spring 4.3.12.RELEASE源码分析 **
+**本文基于Spring 4.3.12.RELEASE源码分析**
 
 ### Spring AOP 入门
 为了探究AOP实现原理，首先定义几个类，一个Service接口：
