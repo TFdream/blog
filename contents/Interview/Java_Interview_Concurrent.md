@@ -2,19 +2,20 @@
 
 ## 线程
 ### 线程的生命周期
-Java语言中定义了5种线程状态，在任意一个时间点，一个线程只能有且只有其中一种状态，这5种状态是
+Java语言中定义了5种线程状态，在任意一个时间点，一个线程只能有且只有其中一种状态，这5种状态是：
+
 - 新建（New）：创建后尚未启动的线程处于这种状态。
 - 运行（Runable）：包括了操作系统线程状态中的Running和Ready，也就是处于此状态的线程有可能正在执行，也有可能正在等待着CPU为它分配执行时间。
 - 无限期等待（Waiting）：处于这种状态的线程不会被分配CPU执行时间，它们要等待被其他线程显式地唤醒。以下方法会让线程陷入无限期的等待状态：
-  - 没有设置timeout参数的Object.wait()方法；
-  - 没有设置timeout参数的Thread.join()方法；
-  - LockSupport.park()方法；
+ - 没有设置timeout参数的Object.wait()方法；
+ - 没有设置timeout参数的Thread.join()方法；
+ - LockSupport.park()方法；
 - 限期等待（Timed Waiting）：处于这种状态的线程也不会被分配CPU执行时间，不过无须等待被其他线程显式地唤醒，在一定时间之后它们会由操作系统自动唤醒。以下方法会让线程进入限期等待状态：
-  - Thread.sleep()方法；
-  - 设置了timeout参数的Object.wait()方法；
-  - 设置了timeout参数的Thread.join()方法；
-  - LockSupport.parkNanos()方法；
-  - LockSupport.parkUntil()方法；
+ - Thread.sleep()方法；
+ - 设置了timeout参数的Object.wait()方法；
+ - 设置了timeout参数的Thread.join()方法；
+ - LockSupport.parkNanos()方法；
+ - LockSupport.parkUntil()方法；
 - 阻塞（Blocked）：线程被阻塞了，“阻塞状态”与“等待状态”的区别是：“阻塞状态”在等待着获取到一个排它锁，这个事件将在另外一个线程放弃这个锁的时候发生；而“等待状态”则是在等待一段时间，或者唤醒动作的发生。在程序等待进入同步区域（synchronized）的时候，线程将进入这种状态。
 - 结束（Terminated）：已终止的线程状态，线程已经结束执行。
 
