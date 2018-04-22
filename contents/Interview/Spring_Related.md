@@ -19,7 +19,7 @@ Spring MVC原理：https://www.cnblogs.com/xiaoxi/p/6164383.html
 
 ## Mybatis
 Mybatis之工作原理：https://blog.csdn.net/u014297148/article/details/78696096
-Mybatis 一级、二级缓存原理：
+聊聊MyBatis缓存机制：https://tech.meituan.com/mybatis_cache.html
 
 ## Spring Boot
 Spring Boot干货系列：（三）启动原理解析：https://www.cnblogs.com/zheting/p/6707035.html
