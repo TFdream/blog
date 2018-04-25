@@ -88,6 +88,7 @@ HTTP 2.0 的出现，相比于 HTTP 1.x ，大幅度的提升了 web 性能。�
 众所周知 ，在 HTTP/1.1 协议中 「浏览器客户端在同一时间，针对同一域名下的请求有一定数量限制。超过限制数目的请求会被阻塞」。
 
 而 HTTP/2 的多路复用(Multiplexing) 则允许同时通过单一的 HTTP/2 连接发起多重的**请求-响应**消息。
+![http2_multiplexing](https://github.com/TFdream/blog/blob/master/docs/image/Http/http2_multiplexing.jpg)
 
 因此 HTTP/2 可以很容易的去实现多流并行而不用依赖建立多个 TCP 连接，HTTP/2 把 HTTP 协议通信的基本单位缩小为一个一个的帧，这些帧对应着逻辑流中的消息。并行地在同一个 TCP 连接上**双向交换**信息。
 
@@ -95,6 +96,7 @@ HTTP 2.0 的出现，相比于 HTTP 1.x ，大幅度的提升了 web 性能。�
 在不改动 HTTP/1.x 的语义、方法、状态码、URI 以及首部字段….. 的情况下, HTTP/2 是如何做到「突破 HTTP1.1 的性能限制，改进传输性能，实现低延迟和高吞吐量」的 ?
 
 关键之一就是在 应用层(HTTP/2)和传输层(TCP or UDP)之间增加一个二进制分帧层。
+![](https://github.com/TFdream/blog/blob/master/docs/image/Http/htt2_binary_frame.jpg)
 
 在二进制分帧层中， HTTP/2 会将所有传输的信息分割为更小的消息和帧（frame）,并对它们采用二进制格式的编码 ，其中 HTTP1.x 的首部信息会被封装到 HEADER frame，而相应的 Request Body 则封装到 DATA frame 里面。
 
@@ -135,5 +137,8 @@ HTTP/2 通过让所有数据流共用同一个连接，可以更有效地使用 
 而关闭连接时，当收到对方的FIN报文时，仅仅表示对方不再发送数据了但是还能接收数据，己方也未必全部数据都发送给对方了，所以己方可以立即close，也可以发送一些数据给对方后，再发送FIN报文给对方来表示同意现在关闭连接，因此，己方ACK和FIN一般都会分开发送。
 
 ## UDP
+
+## 参考资料
+[HTTP/2.0 相比1.0有哪些重大改进？](https://www.zhihu.com/question/34074946)
 
 
