@@ -60,7 +60,11 @@ Java堆分代如下：
 
 ![Jvm_Heap](https://github.com/TFdream/blog/blob/master/docs/image/JVM/Jvm_heap_area.png)
 
+从图中可以看出： 堆大小 = 新生代 + 老年代。其中，堆的大小可以通过参数 –Xms、-Xmx 来指定。
+默认的，新生代 ( Young ) 与老年代 ( Old ) 的比例的值为 1:2 ( 该值可以通过参数 –XX:NewRatio 来指定)，即：新生代 ( Young ) = 1/3 的堆空间大小,老年代 ( Old ) = 2/3 的堆空间大小。
 
+其中，新生代 ( Young )被细分为 Eden 和 两个 Survivor 区域，这两个 Survivor 区域分别被命名为 from 和 to，以示区分。
+默认的，Edem : from : to = 8 :1 : 1 ( 可以通过参数–XX:SurvivorRatio 来设定 )，即： Eden = 8/10 的新生代空间大小，from = to = 1/10 的新生代空间大小。
 
 #### 1. 新生代（Young Generation）
 新生代是所有新对象产生的地方。当Eden区没有足够空间进行分配时，虚拟机将发起一次Minor GC。年轻代分为3个部分：Enden区和Survivor From和Survivor To区。
