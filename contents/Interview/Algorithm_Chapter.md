@@ -378,6 +378,86 @@ public class ArrayUtils {
 #### 1.非递归
 ```
 
+    public Node reverse(Node head) {
+        if (head==null || head.next==null) {    ////链表为空或者仅1个数直接返回
+            return head;
+        }
+        Node newHead = null;
+        Node p = head;
+        while (p!=null) {
+            Node tmp = p.next;          //暂存p下一个地址，防止变化指针指向后找不到后续的数
+            p.next = newHead;               //p->next指向前一个空间
+            newHead = p;                     //新链表的头移动到p，扩长一步链表
+            p = tmp;                   //p指向原始链表p指向的下一个空间
+        }
+        return newHead;
+    }
+
+```
+
+测试代码：
+```
+package juice.redis;
+
+/**
+ * @author Ricky Fung
+ */
+public class LinkListReverse {
+
+    public static void main(String[] args) {
+
+        LinkListReverse reverse = new LinkListReverse();
+        Node head = reverse.buildLinkList();
+        reverse.printLinkList(head);
+
+        Node newHead = reverse.reverse(head);
+
+        reverse.printLinkList(newHead);
+    }
+
+    public Node reverse(Node head) {
+        if (head==null || head.next==null) {    ////链表为空或者仅1个数直接返回
+            return head;
+        }
+        Node newHead = null;
+        Node p = head;
+        while (p!=null) {
+            Node tmp = p.next;          //暂存p下一个地址，防止变化指针指向后找不到后续的数
+            p.next = newHead;               //p->next指向前一个空间
+            newHead = p;                     //新链表的头移动到p，扩长一步链表
+            p = tmp;                   //p指向原始链表p指向的下一个空间
+        }
+        return newHead;
+    }
+
+    static class Node {
+        private int value;
+        private Node next;
+    }
+
+    private void printLinkList(Node head) {
+        Node temp = head;
+        while (temp !=null) {
+            System.out.print(" " + temp.value);
+            temp = temp.next;
+        }
+        System.out.println("");
+    }
+
+    private Node buildLinkList() {
+        Node head = new Node();
+        Node prev = head;
+        for (int i=0; i<10; i++) {
+            Node node = new Node();
+            node.value = i+1;
+            prev.next = node;
+
+            prev = node;
+        }
+        return head;
+    }
+}
+
 ```
 
 ## 其他
