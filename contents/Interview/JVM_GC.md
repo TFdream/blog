@@ -249,18 +249,19 @@ public class App {
 
 ### 2. 垃圾收集器组合
 JDK7/8后，HotSpot虚拟机所有收集器及组合（连线），如下图：
+
 ![](https://github.com/TFdream/blog/blob/master/docs/image/JVM/Jvm_collector.png)
 
-#### A. 图中展示了7种不同分代的收集器：
-Serial、ParNew、Parallel Scavenge、Serial Old、Parallel Old、CMS、G1；
+图中展示了7种不同分代的收集器：
+* Serial、ParNew、Parallel Scavenge、Serial Old、Parallel Old、CMS、G1；
 
-#### B. 它们所处区域，则表明其是属于新生代收集器还是老年代收集器：
+它们所处区域，则表明其是属于新生代收集器还是老年代收集器：
 
 * 新生代收集器：Serial、ParNew、Parallel Scavenge；
 * 老年代收集器：Serial Old、Parallel Old、CMS；
 * 整堆收集器：G1；
 
-#### C. 两个收集器间有连线，表明它们可以搭配使用：
+两个收集器间有连线，表明它们可以搭配使用：
 
 Serial/Serial Old、Serial/CMS、ParNew/Serial Old、ParNew/CMS、Parallel Scavenge/Serial Old、Parallel Scavenge/Parallel Old、G1；
 
