@@ -57,7 +57,10 @@ Java虚拟机规范对方法区的限制非常宽松，除了和堆一样不需�
 
 ### 堆（Heap）
 Java堆分代如下：
+
 ![Jvm_Heap](https://github.com/TFdream/blog/blob/master/docs/image/JVM/Jvm_heap_area.png)
+
+
 
 #### 1. 新生代（Young Generation）
 新生代是所有新对象产生的地方。当Eden区没有足够空间进行分配时，虚拟机将发起一次Minor GC。年轻代分为3个部分：Enden区和Survivor From和Survivor To区。
@@ -125,7 +128,32 @@ public class App {
 Java虚拟机垃圾回收(二) 垃圾回收算法：https://blog.csdn.net/tjiyu/article/details/53983064
 
 
-## 4.JVM垃圾收集器
+## 四、JVM垃圾收集器
+先来了解HotSpot虚拟机中的7种垃圾收集器：Serial、ParNew、Parallel Scavenge、Serial Old、Parallel Old、CMS、G1，先介绍一些垃圾收集的相关概念，再介绍它们的主要特点、应用场景、以及一些设置参数和基本运行原理。
+
+### 1. 垃圾收集器概述
+垃圾收集器是垃圾回收算法（标记-清除算法、复制算法、标记-整理算法、火车算法）的具体实现，不同商家、不同版本的JVM所提供的垃圾收集器可能会有很在差别，本文主要介绍HotSpot虚拟机中的垃圾收集器。
+
+### 2. 垃圾收集器组合
+JDK7/8后，HotSpot虚拟机所有收集器及组合（连线），如下图：
+![](https://github.com/TFdream/blog/blob/master/docs/image/JVM/Jvm_collector.png)
+
+#### A. 图中展示了7种不同分代的收集器：
+Serial、ParNew、Parallel Scavenge、Serial Old、Parallel Old、CMS、G1；
+
+#### B. 它们所处区域，则表明其是属于新生代收集器还是老年代收集器：
+
+* 新生代收集器：Serial、ParNew、Parallel Scavenge；
+* 老年代收集器：Serial Old、Parallel Old、CMS；
+* 整堆收集器：G1；
+
+#### C. 两个收集器间有连线，表明它们可以搭配使用：
+
+Serial/Serial Old、Serial/CMS、ParNew/Serial Old、ParNew/CMS、Parallel Scavenge/Serial Old、Parallel Scavenge/Parallel Old、G1；
+
+其中Serial Old作为CMS出现"Concurrent Mode Failure"失败的后备预案（后面介绍）；
+
+
 Java虚拟机垃圾回收(三) 7种垃圾收集器：https://blog.csdn.net/tjiyu/article/details/53983650
 
 
