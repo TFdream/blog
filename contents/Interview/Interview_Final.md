@@ -2,9 +2,8 @@
 我是冯兵兵，目前任职于宜人贷创新产品部，负责小咖贷借款App 后端系统需求分析、功能开发、技术方案设计和优化工作。小咖贷2017年8月份立项，从0开始搭建小咖贷App 后端系统。
 
 ## 系统整体架构
-整体架构如下图所示：
 
-![System_Arch](https://github.com/TFdream/blog/blob/master/docs/image/Interview/System_Arch-2018-04-27.png)
+![System_Archtecture](https://github.com/TFdream/blog/blob/master/docs/image/Interview/System_Archtecture.png)
 
 ### 分层架构
 | 名称 | 功能 |
