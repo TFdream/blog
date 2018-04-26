@@ -1,6 +1,9 @@
 ## 个人介绍
 我是冯兵兵，目前任职于宜人贷创新产品部，负责小咖贷借款App 后端系统需求分析、功能开发、技术方案设计和优化工作。小咖贷2017年8月份立项，从0开始搭建小咖贷App 后端系统。
 
+## 系统整体架构
+!()[https://github.com/TFdream/blog/blob/master/docs/image/Interview/System_Arch-2018-04-27.png]
+
 ## 一、系统亮点
 ### 1. 高可用
 基于RPC框架(dubbo)做集群化，避免单点故障
