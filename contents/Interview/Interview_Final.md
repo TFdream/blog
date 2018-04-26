@@ -6,7 +6,7 @@
 
 ![System_Arch](https://github.com/TFdream/blog/blob/master/docs/image/Interview/System_Arch-2018-04-27.png)
 
-分层架构：
+### 分层架构
 | 名称 | 功能 |
 | --- | --- |
 | 端 | 包括：Android、iOS、Wap（H5） |
