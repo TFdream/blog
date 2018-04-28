@@ -8,6 +8,7 @@
 
 ### April
 人间四月芳菲尽，山寺桃花始盛开。 
+* April 28, 2018 >>> [MySQL关于不可重复读与幻读的解决方案](contents/MySQL/MVCC.md)
 * April 25, 2018 >>> [从CAP 理论到Paxos 算法](contents/Archtecture/Cap_Paxos_Alg_Intro.md)
 * April 24, 2018 >>> [短网址(Short URL)原理及其实现](contents/Microservices/Short_url.md)
 * April 8, 2018 >>> [Hystrix 隔离策略: 线程 vs 信号量](contents/Microservices/Hystrix_Isolation.md)
