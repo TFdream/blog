@@ -271,6 +271,9 @@ Serial/Serial Old、Serial/CMS、ParNew/Serial Old、ParNew/CMS、Parallel Scave
 
 其中Serial Old作为CMS出现"Concurrent Mode Failure"失败的后备预案（后面介绍）；
 
+## 性能优化
+* [Java性能优化指南1.8版，及唯品会的实战](http://calvin1978.blogcn.com/articles/javatuning.html)
+* [一份平民化的应用性能优化检查列表（完整篇）](http://calvin1978.blogcn.com/articles/checklist.html)
 
 ## 参考资料
 * Java虚拟机垃圾回收(二) 垃圾回收算法：https://blog.csdn.net/tjiyu/article/details/53983064
