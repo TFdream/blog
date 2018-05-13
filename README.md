@@ -9,6 +9,7 @@
 ### May
 五月榴花照眼明，枝间时见子初成。
 
+* May 13, 2018 >>> [JDK各个版本的新特性 - JDK1.5-1.8](contents/Java/JDK_New_Features.md)
 * May 12, 2018 >>> [Linux CPU使用率100% 异常排查实践](contents/Java/CPU_100_Analysis.md)
 
 ### April
