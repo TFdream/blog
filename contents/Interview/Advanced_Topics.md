@@ -17,6 +17,9 @@
 ## OOM异常排查
 [Java OOM异常排查](https://github.com/TFdream/blog/blob/master/contents/Java/Java_OOM_Analysis.md)
 
+## JIT
+* [JVM内联函数](https://blog.csdn.net/ke_weiquan/article/details/51946174)
+* [逃逸分析]()
 
 ## JVM性能调优
 * [Java性能优化指南1.8版，及唯品会的实战](http://calvin1978.blogcn.com/articles/javatuning.html)
