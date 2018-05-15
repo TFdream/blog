@@ -274,9 +274,9 @@ Serial/Serial Old、Serial/CMS、ParNew/Serial Old、ParNew/CMS、Parallel Scave
 ## 内存管理参数
 JDK 1.6的Hotspot虚拟机有很多非稳定参数（），使用-XX:+PrintFlagFinal参数可以输出所有参数的名称及默认值。
 参数使用的方式有如下3种：
-* -XX:+<option> ：开启option参数
-* -XX:<option> ：关闭option参数
-* -XX:<option>=<value> ：将option参数的值设置为value
+* -XX:+\<option\> ：开启option参数
+* -XX:\<option\> ：关闭option参数
+* -XX:\<option\>=\<value\> ：将option参数的值设置为value
 
 | 参数 | 默认值 | 使用介绍 |
 | --- | --- | --- |
