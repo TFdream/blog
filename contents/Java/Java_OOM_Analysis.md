@@ -50,4 +50,5 @@ $ jmap  -permstat  /opt/taobao/java/bin/java core.17024
 
 ### 3. 分析dump文件
 
-
+## 参考资料
+[一次应用OOM排查](http://ifeve.com/one-java-oom/)
