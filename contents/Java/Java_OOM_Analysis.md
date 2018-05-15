@@ -48,7 +48,12 @@ $ jmap  -permstat  /opt/taobao/java/bin/java core.17024
 
 参数调整后，过了几天还是出现OOM，可以断定是内存溢出导致的，通过自动dump下来的内存文件很快发现有一个对象占用内存非常大，解决后系统恢复正常。
 
-### 3. 分析dump文件
+### 3. 使用VisualVM分析
+
+
+### 4. 使用MAT分析
+
 
 ## 参考资料
-[一次应用OOM排查](http://ifeve.com/one-java-oom/)
+* [又一次线上OOM排查经过 - ImportNew](http://www.importnew.com/24393.html)
+* [一次应用OOM排查 - 并发编程网](http://ifeve.com/one-java-oom/)
