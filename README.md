@@ -74,11 +74,11 @@
 七月七日长生殿，夜半无人私语时。
 
 * July 6, 2017 >>> [Java HashMap 源码分析](contents/Java/HashMap_Theory_Analysis.md)
-* July 1, 2017 >>> [线程的生命周期](contents/Concurrent/Thread_Lifecycle.md)
+* July 1, 2017 >>> [Java LinkedList 源码分析](contents/Java/LinkedList_Analysis.md)
 
 ### June
 六月荷花香满湖，红衣绿扇映清波。
-
+* June 20, 2017 >>> [线程的生命周期](contents/Concurrent/Thread_Lifecycle.md)
 * June 18, 2017 >>> [Java CopyOnWriteArrayList 源码分析](contents/Java/CopyOnWriteArrayList_Analysis.md)
 * June 2, 2017 >>> [Java ThreadLocal 源码分析](contents/Java/ThreadLocal_Analysis.md)
 
