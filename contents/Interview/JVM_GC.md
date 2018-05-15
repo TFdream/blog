@@ -271,6 +271,24 @@ Serial/Serial Old、Serial/CMS、ParNew/Serial Old、ParNew/CMS、Parallel Scave
 
 其中Serial Old作为CMS出现"Concurrent Mode Failure"失败的后备预案（后面介绍）；
 
+## 内存管理参数
+JDK 1.6的Hotspot虚拟机有很多非稳定参数（），使用-XX:+PrintFlagFinal参数可以输出所有参数的名称及默认值。
+参数使用的方式有如下3种：
+* -XX:+<option> ：开启option参数
+* -XX:<option> ：关闭option参数
+* -XX:<option>=<value> ：将option参数的值设置为value
+
+| 参数 | 默认值 | 使用介绍 |
+| --- | --- | --- |
+| DisableExplicitGC | 默认关闭 | 忽略来着System.gc()方法触发的垃圾收集|
+| DisableExplicitGC | 默认关闭 | 忽略来着System.gc()方法触发的垃圾收集|
+| UseSerialGC | Client模式的虚拟机默认开启，其他模式关闭 | 虚拟机运行在Client模式的默认值，打开此开关后，使用Serial+Serial Old 的收集器组合进行内存回收|
+| UseParNewGC | 默认关闭 | 打开此开关后，使用ParNew + Serial Old 的收集器组合进行内存回收|
+| UseConcMarkSweepGC | 默认关闭 | 打开此开关后，使用ParNew + CMS + Serial Old 的收集器组合进行内存回收。如果CMS收集器出现Concurrent Mode Failure，则Serial Old收集器将作为后备收集器|
+| UseParallelGC | Server模式的虚拟机默认开启，其他模式关闭 | 虚拟机运行在Server模式的默认值，打开此开关后，，使用Parallel Scavenge + Serial Old 的收集器组合进行内存回收|
+| UseParallelOldGC | 默认关闭 | 打开此开关后，，使用Parallel Scavenge + Parallel Old 的收集器组合进行内存回收|
+
+
 ## 性能优化
 * [Java性能优化指南1.8版，及唯品会的实战](http://calvin1978.blogcn.com/articles/javatuning.html)
 * [一份平民化的应用性能优化检查列表（完整篇）](http://calvin1978.blogcn.com/articles/checklist.html)
