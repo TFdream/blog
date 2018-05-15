@@ -62,7 +62,7 @@
 
 ### September
 星河璀璨，凤舞九天。 
-* September 1, 2017 >>> [Ch9]()
+* September 1, 2017 >>> [ConcurrentHashMap 源码分析（基于1.7、1.8版本）](contents/Java/ConcurrentHashMap_Theory.md)
 
 ### August
 八月中秋月正圆，送君吟上木兰船。
@@ -73,15 +73,11 @@
 ### July
 七月七日长生殿，夜半无人私语时。
 
-* July 6, 2017 >>> [Ch7]()
+* July 6, 2017 >>> [HashMap 源码分析](contents/Java/HashMap_Theory_Analysis.md)
 
 ### June
 六月荷花香满湖，红衣绿扇映清波。
 
-* June 2, 2017 >>> [Ch6]()
-
-
-不积跬步，无以至千里; 不积小流，无以成江海。
-
+* June 2, 2017 >>> [ThreadLocal 源码分析](contents/Java/ThreadLocal_Analysis.md)
 
 
