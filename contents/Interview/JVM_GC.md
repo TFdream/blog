@@ -281,12 +281,258 @@ JDK 1.6的Hotspot虚拟机有很多非稳定参数（），使用-XX:+PrintFlagF
 | 参数 | 默认值 | 使用介绍 |
 | --- | --- | --- |
 | DisableExplicitGC | 默认关闭 | 忽略来着System.gc()方法触发的垃圾收集|
-| DisableExplicitGC | 默认关闭 | 忽略来着System.gc()方法触发的垃圾收集|
+| ExplicitGCInvokesConcurrent | 默认关闭 | 当收到System.gc()方法提交的垃圾收集请求时，使用CMS收集器进行收集|
 | UseSerialGC | Client模式的虚拟机默认开启，其他模式关闭 | 虚拟机运行在Client模式的默认值，打开此开关后，使用Serial+Serial Old 的收集器组合进行内存回收|
 | UseParNewGC | 默认关闭 | 打开此开关后，使用ParNew + Serial Old 的收集器组合进行内存回收|
 | UseConcMarkSweepGC | 默认关闭 | 打开此开关后，使用ParNew + CMS + Serial Old 的收集器组合进行内存回收。如果CMS收集器出现Concurrent Mode Failure，则Serial Old收集器将作为后备收集器|
 | UseParallelGC | Server模式的虚拟机默认开启，其他模式关闭 | 虚拟机运行在Server模式的默认值，打开此开关后，，使用Parallel Scavenge + Serial Old 的收集器组合进行内存回收|
 | UseParallelOldGC | 默认关闭 | 打开此开关后，，使用Parallel Scavenge + Parallel Old 的收集器组合进行内存回收|
+
+## OutOfMemoryError类型
+上述区域中，除了程序计数器，其他在VM Spec中都描述了产生OutOfMemoryError（下称OOM）的情形，那我们就实战模拟一下，通过几段简单的代码，令对应的区域产生OOM异常以便加深认识，同时初步介绍一些与内存相关的虚拟机参数。下文的代码都是基于Sun Hotspot虚拟机1.6版的实现，对于不同公司的不同版本的虚拟机，参数与程序运行结果可能结果会有所差别。
+
+### Java堆
+Java堆存放的是对象实例，因此只要不断建立对象，并且保证GC Roots到对象之间有可达路径即可产生OOM异常。测试中限制Java堆大小为20M，不可扩展，通过参数```-XX:+HeapDumpOnOutOfMemoryError```让虚拟机在出现OOM异常的时候Dump出内存映像以便分析。
+
+```
+/**
+ * VM Args：-Xms20m -Xmx20m -XX:+HeapDumpOnOutOfMemoryError
+ * @author zzm
+ */
+public class HeapOOM {
+
+       static class OOMObject {
+
+       }
+       public static void main(String[] args) {
+              List<OOMObject> list = new ArrayList<OOMObject>();
+              while (true) {
+                     list.add(new OOMObject());
+              }
+       }
+}
+```
+运行结果：
+```
+java.lang.OutOfMemoryError: Java heap space
+
+Dumping heap to java_pid3404.hprof ...
+
+Heap dump file created [22045981 bytes in 0.663 secs]
+```
+
+### VM栈和本地方法栈
+
+Hotspot虚拟机并不区分VM栈和本地方法栈，因此-Xoss参数实际上是无效的，栈容量只由-Xss参数设定。关于VM栈和本地方法栈在VM Spec描述了两种异常：StackOverflowError与OutOfMemoryError，当栈空间无法继续分配分配时，到底是内存太小还是栈太大其实某种意义上是对同一件事情的两种描述而已，在笔者的实验中，对于单线程应用尝试下面3种方法均无法让虚拟机产生OOM，全部尝试结果都是获得SOF异常。
+
+1.使用-Xss参数削减栈内存容量。结果：抛出SOF异常时的堆栈深度相应缩小。
+2.定义大量的本地变量，增大此方法对应帧的长度。结果：抛出SOF异常时的堆栈深度相应缩小。
+3.创建几个定义很多本地变量的复杂对象，打开逃逸分析和标量替换选项，使得JIT编译器允许对象拆分后在栈中分配。结果：实际效果同第二点。
+
+清单2：VM栈和本地方法栈OOM测试（仅作为第1点测试程序）：
+```
+/**
+ * VM Args：-Xss128k
+ * @author zzm
+ */
+public class JavaVMStackSOF {
+
+       private int stackLength = 1;
+
+       public void stackLeak() {
+              stackLength++;
+              stackLeak();
+
+       }
+
+       public static void main(String[] args) throws Throwable {
+              JavaVMStackSOF oom = new JavaVMStackSOF();
+              try {
+                     oom.stackLeak();
+              } catch (Throwable e) {
+                     System.out.println("stack length:" + oom.stackLength);
+                     throw e;
+
+              }
+       }
+}
+```
+运行结果：
+```
+stack length:2402
+
+Exception in thread "main" java.lang.StackOverflowError
+
+        at org.fenixsoft.oom.JavaVMStackSOF.stackLeak(JavaVMStackSOF.java:20)
+
+        at org.fenixsoft.oom.JavaVMStackSOF.stackLeak(JavaVMStackSOF.java:21)
+
+        at org.fenixsoft.oom.JavaVMStackSOF.stackLeak(JavaVMStackSOF.java:21)
+```
+
+如果在多线程环境下，不断建立线程倒是可以产生OOM异常，但是基本上这个异常和VM栈空间够不够关系没有直接关系，甚至是给每个线程的VM栈分配的内存越多反而越容易产生这个OOM异常。
+
+原因其实很好理解，操作系统分配给每个进程的内存是有限制的，譬如32位Windows限制为2G，Java堆和方法区的大小JVM有参数可以限制最大值，那剩余的内存为2G（操作系统限制）-Xmx（最大堆）-MaxPermSize（最大方法区），程序计数器消耗内存很小，可以忽略掉，那虚拟机进程本身耗费的内存不计算的话，剩下的内存就供每一个线程的VM栈和本地方法栈瓜分了，那自然每个线程中VM栈分配内存越多，就越容易把剩下的内存耗尽。
+
+清单3：创建线程导致OOM异常：
+```
+/**
+ * VM Args：-Xss2M （这时候不妨设大些）
+ * @author zzm
+ */
+public class JavaVMStackOOM {
+
+       private void dontStop() {
+              while (true) {
+
+              }
+       }
+
+       public void stackLeakByThread() {
+              while (true) {
+                     Thread thread = new Thread(new Runnable() {
+                            @Override
+
+                            public void run() {
+                                   dontStop();
+                            }
+                     });
+                     thread.start();
+              }
+
+       }
+
+       public static void main(String[] args) throws Throwable {
+              JavaVMStackOOM oom = new JavaVMStackOOM();
+              oom.stackLeakByThread();
+       }
+}
+```
+
+特别提示一下，如果读者要运行上面这段代码，记得要存盘当前工作，上述代码执行时有很大令操作系统卡死的风险。
+
+运行结果：
+```
+Exception in thread "main" java.lang.OutOfMemoryError: unable to create new native thread
+```
+
+### 运行时常量池
+
+要在常量池里添加内容，最简单的就是使用String.intern()这个Native方法。由于常量池分配在方法区内，我们只需要通过-XX:PermSize和-XX:MaxPermSize限制方法区大小即可限制常量池容量。实现代码如下：
+
+清单4：运行时常量池导致的OOM异常：
+```
+/**
+ * VM Args：-XX:PermSize=10M -XX:MaxPermSize=10M
+ * @author zzm
+ */
+public class RuntimeConstantPoolOOM {
+
+       public static void main(String[] args) {
+              // 使用List保持着常量池引用，压制Full GC回收常量池行为
+              List<String> list = new ArrayList<String>();
+
+              // 10M的PermSize在integer范围内足够产生OOM了
+
+              int i = 0;
+              while (true) {
+                     list.add(String.valueOf(i++).intern());
+              }
+       }
+
+}
+```
+
+运行结果：
+```
+Exception in thread "main" java.lang.OutOfMemoryError: PermGen space
+
+       at java.lang.String.intern(Native Method)
+
+       at org.fenixsoft.oom.RuntimeConstantPoolOOM.main(RuntimeConstantPoolOOM.java:18)
+```
+
+### 方法区
+
+上文讲过，方法区用于存放Class相关信息，所以这个区域的测试我们借助CGLib直接操作字节码动态生成大量的Class，值得注意的是，这里我们这个例子中模拟的场景其实经常会在实际应用中出现：当前很多主流框架，如Spring、Hibernate对类进行增强时，都会使用到CGLib这类字节码技术，当增强的类越多，就需要越大的方法区用于保证动态生成的Class可以加载入内存。
+
+清单5：借助CGLib使得方法区出现OOM异常：
+```
+/**
+ * VM Args： -XX:PermSize=10M -XX:MaxPermSize=10M
+ * @author zzm
+ */
+public class JavaMethodAreaOOM {
+
+       public static void main(String[] args) {
+              while (true) {
+                     Enhancer enhancer = new Enhancer();
+                     enhancer.setSuperclass(OOMObject.class);
+                     enhancer.setUseCache(false);
+                     enhancer.setCallback(new MethodInterceptor() {
+
+                            public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable {
+
+                                   return proxy.invokeSuper(obj, args);
+
+                            }
+
+                     });
+                     enhancer.create();
+              }
+       }
+
+       static class OOMObject {
+
+       }
+}
+```
+
+运行结果：
+```
+Caused by: java.lang.OutOfMemoryError: PermGen space
+
+       at java.lang.ClassLoader.defineClass1(Native Method)
+
+       at java.lang.ClassLoader.defineClassCond(ClassLoader.java:632)
+
+       at java.lang.ClassLoader.defineClass(ClassLoader.java:616)
+
+       ... 8 more
+```
+
+### 本机直接内存
+
+DirectMemory容量可通过-XX:MaxDirectMemorySize指定，不指定的话默认与Java堆（-Xmx指定）一样，下文代码越过了DirectByteBuffer，直接通过反射获取Unsafe实例进行内存分配（Unsafe类的getUnsafe()方法限制了只有引导类加载器才会返回实例，也就是基本上只有rt.jar里面的类的才能使用），因为DirectByteBuffer也会抛OOM异常，但抛出异常时实际上并没有真正向操作系统申请分配内存，而是通过计算得知无法分配既会抛出，真正申请分配的方法是unsafe.allocateMemory()。
+
+```
+/**
+ * VM Args：-Xmx20M -XX:MaxDirectMemorySize=10M
+ * @author zzm
+ */
+public class DirectMemoryOOM {
+
+       private static final int _1MB = 1024 * 1024;
+
+       public static void main(String[] args) throws Exception {
+              Field unsafeField = Unsafe.class.getDeclaredFields()[0];
+              unsafeField.setAccessible(true);
+              Unsafe unsafe = (Unsafe) unsafeField.get(null);
+              while (true) {
+                     unsafe.allocateMemory(_1MB);
+              }
+       }
+}
+```
+
+运行结果：
+```
+Exception in thread "main" java.lang.OutOfMemoryError
+
+       at sun.misc.Unsafe.allocateMemory(Native Method)
+
+       at org.fenixsoft.oom.DirectMemoryOOM.main(DirectMemoryOOM.java:20)
+```
 
 
 ## 性能优化
