@@ -109,3 +109,47 @@ add()方法如下：
 ```
 首先调用checkElementIndex判断index是否合法（index >= 0 && index < size），然后根据 index是否大于当前size的一半决定是从头结点开始往后查询，还是从尾节点开始往前查询。
 
+### 删除操作
+```
+    public E remove(int index) {
+        checkElementIndex(index);
+        return unlink(node(index));
+    }
+	
+    /**
+     * Unlinks non-null node x.
+     */
+    E unlink(Node<E> x) {
+        // assert x != null;
+        final E element = x.item;
+        final Node<E> next = x.next;
+        final Node<E> prev = x.prev;
+
+        if (prev == null) {
+            first = next;
+        } else {
+            prev.next = next;
+            x.prev = null;
+        }
+
+        if (next == null) {
+            last = prev;
+        } else {
+            next.prev = prev;
+            x.next = null;
+        }
+
+        x.item = null;
+        size--;
+        modCount++;
+        return element;
+    }
+```
+主要逻辑如下：
+1. 判断index是否合法。
+2. 根据index定位到Node（node(index)方法）。
+3. 修改节点指针（unlink()方法）。
+
+-----------
+Ending!
+
