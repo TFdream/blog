@@ -1,4 +1,14 @@
-## Spring Boot
+SpringBoot最大的特点就是提供了很多默认的配置，Spring4.x提供了基于条件来配置Bean的能力，SpringBoot就是通过这一原理来实现的。 
+
+## 创建自己的Spring Boot Starter
+如果你想要自己创建一个starter，那么基本上包含以下几步：
+1. 创建一个starter项目，关于项目的命名你可以参考[这里](https://docs.spring.io/spring-boot/docs/1.5.12.RELEASE/reference/htmlsingle/#boot-features-custom-starter-naming)
+2. 创建一个ConfigurationProperties用于保存你的配置信息（如果你的项目不使用配置信息则可以跳过这一步，不过这种情况非常少见）
+3. 创建一个AutoConfiguration，引用定义好的配置信息；在AutoConfiguration中实现所有starter应该完成的操作，并且把这个类加入spring.factories配置文件中进行声明
+4. 打包项目，之后在一个SpringBoot项目中引入该项目依赖，然后就可以使用该starter了
+
+Spring 官方 Starter通常命名为spring-boot-starter-{name}如 spring-boot-starter-web， Spring官方建议非官方Starter命名应遵循{name}-spring-boot-starter的格式。
+
 ```
 package com.alibaba.druid.spring.boot.autoconfigure;
 
@@ -58,6 +68,7 @@ public class DruidDataSourceAutoConfigure {
 
 
 ## 参考资料
+* [Spring Boot custom-starter](https://docs.spring.io/spring-boot/docs/1.5.12.RELEASE/reference/htmlsingle/#boot-features-custom-starter-naming)
 * [dubbo-spring-boot-starter](https://github.com/alibaba/dubbo-spring-boot-starter)
 * [druid-spring-boot-starter](https://github.com/alibaba/druid/tree/master/druid-spring-boot-starter)
 * [Condition annotations](https://docs.spring.io/spring-boot/docs/1.5.10.RELEASE/reference/htmlsingle/#boot-features-bean-conditions)
