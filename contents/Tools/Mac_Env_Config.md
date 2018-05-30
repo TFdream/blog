@@ -102,6 +102,19 @@ $ mvn -v
 $ echo $MAVEN_HOME
 ```
 
+### IntelliJ IDEA
+#### 1. 下载
+[点此](https://www.jetbrains.com/idea/download/) 下载IntelliJ IDEA安装包。
+
+#### 2. 激活方式
+激活方式如下：
+* 通过License Server：http://intellij.mandroid.cn/。
+* 打开 http://idea.lanyus.com/ 获取Activation coce。
+* 通过License Server：http://idea.iteblog.com/key.php
+
+#### 3. 启动JVM参数调优
+
+
 ## Git
 ### 1. 下载Git
 [点此](https://git-scm.com/)下载Git安装包。
