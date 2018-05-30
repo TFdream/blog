@@ -134,19 +134,20 @@ color.diff=auto
 ```
 
 ### 3. 生成 ssh 密钥
-#### 1.查看是否已经有了ssh密钥
-查看是否已经有了ssh密钥：
+#### 1.查看ssh密钥
+查看是否已经有了ssh密钥，命令如下：
 ```
 $ cd ~/.ssh
 ```
 如果没有密钥则不会有此文件夹，有则备份删除。
 
 #### 2.生成密钥
+生成ssh密钥，命令如下：
 ```
 $ ssh-keygen -t rsa -C “example@example.com”
 ```
 按3次回车，密码为空。
 
-#### 4 .添加ssh密钥
+#### 3 .添加ssh密钥
 在gitlab/github个人中心```SSH keys```添加ssh密钥，这要添加的是“id_rsa.pub”里面的公钥。
 
