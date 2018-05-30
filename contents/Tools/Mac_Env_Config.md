@@ -12,7 +12,9 @@ $ ls -l  /usr/bin/java
 ```
 如果是从Oracle下载的idk，且想要更新的话，则首先需要修改jdk的环境变量。oracle下载的，默认会安装在：/Library/Java/JavaVirtualMachines/ 目录下。
 
-#### 1. 进入当前用户主目录
+#### 1. 下载JDK 安装包
+[点此](http://www.oracle.com/technetwork/java/javase/downloads/index.html) 下载JDK 安装包。下载成功后直接点击安装包进行安装。
+
 打开Mac自带终端Terminal，进入当前用户主目录：
 ```
 $ cd ~
@@ -59,7 +61,7 @@ $ echo $JAVA_HOME
 
 ### Maven
 #### 1. 下载Maven
-[点此](http://maven.apache.org/download.cgi)下载Maven
+[点此](http://maven.apache.org/download.cgi)下载Maven安装包。
 
 #### 2. 解压缩
 解压上一步下载的gz文件，命令如下：
@@ -102,7 +104,7 @@ $ echo $MAVEN_HOME
 
 ## Git
 ### 1. 下载Git
-[]()下载Git。
+[点此](https://git-scm.com/)下载Git安装包。
 
 ### 2. 初次运行 Git 前的配置
 Git 提供了一个叫做 git config 的工具（译注：实际是 git-config 命令，只不过可以通过 git 加一个名字来呼叫此命令。），专门用来配置或读取相应的工作环境变量。而正是由这些环境变量，决定了 Git 在各个环节的具体工作方式和行为。这些变量可以存放在以下三个不同的地方：
@@ -141,7 +143,7 @@ $ cd ~/.ssh
 
 #### 2.生成密钥
 ```
-$ ssh-keygen -t rsa -C “xxx@xxx.com”
+$ ssh-keygen -t rsa -C “example@example.com”
 ```
 按3次回车，密码为空。
 
