@@ -6,6 +6,10 @@
 ## 2018
 「但行好事，莫问前程」
 
+### June
+六月荷花香满湖，红衣绿扇映清波。
+* June 02, 2018 >>> [“异地双活”架构 案例集锦](contents/Archtecture/high_available_arch.md)
+
 ### May
 五月榴花照眼明，枝间时见子初成。
 * May 30, 2018 >>> [Mac 开发环境配置](contents/Tools/Mac_Env_Config.md)
