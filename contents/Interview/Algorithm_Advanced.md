@@ -71,5 +71,101 @@ public class FibonacciDemo {
     }
 }
 ```
+## 链表
+### 链表反转
+链表的翻转是程序员面试中出现频度最高的问题之一，常见的解决方法分为递归和迭代两种。
+
+#### 1.非递归
+```
+
+    public Node reverse(Node head) {
+        if (head==null || head.next==null) {    ////链表为空或者仅1个数直接返回
+            return head;
+        }
+        Node newHead = null;
+        Node p = head;
+        while (p!=null) {
+            Node tmp = p.next;          //暂存p下一个地址，防止变化指针指向后找不到后续的数
+            p.next = newHead;               //p->next指向前一个空间
+            newHead = p;                     //新链表的头移动到p，扩长一步链表
+            p = tmp;                   //p指向原始链表p指向的下一个空间
+        }
+        return newHead;
+    }
+
+```
+
+测试代码：
+```
+package juice.redis;
+
+/**
+ * @author Ricky Fung
+ */
+public class LinkListReverse {
+
+    public static void main(String[] args) {
+
+        LinkListReverse reverse = new LinkListReverse();
+        Node head = reverse.buildLinkList();
+        reverse.printLinkList(head);
+
+        Node newHead = reverse.reverse(head);
+
+        reverse.printLinkList(newHead);
+    }
+
+    public Node reverse(Node head) {
+        if (head==null || head.next==null) {    ////链表为空或者仅1个数直接返回
+            return head;
+        }
+        Node newHead = null;
+        Node p = head;
+        while (p!=null) {
+            Node tmp = p.next;          //暂存p下一个地址，防止变化指针指向后找不到后续的数
+            p.next = newHead;               //p->next指向前一个空间
+            newHead = p;                     //新链表的头移动到p，扩长一步链表
+            p = tmp;                   //p指向原始链表p指向的下一个空间
+        }
+        return newHead;
+    }
+
+    static class Node {
+        private int value;
+        private Node next;
+    }
+
+    private void printLinkList(Node head) {
+        Node temp = head;
+        while (temp !=null) {
+            System.out.print(" " + temp.value);
+            temp = temp.next;
+        }
+        System.out.println("");
+    }
+
+    private Node buildLinkList() {
+        Node head = new Node();
+        Node prev = head;
+        for (int i=0; i<10; i++) {
+            Node node = new Node();
+            node.value = i+1;
+            prev.next = node;
+
+            prev = node;
+        }
+        return head;
+    }
+}
+
+```
+
+## n个整数中找出连续m个数加和是最大
+
+## 找出一个数组中的两个数字，让这两个数字之和等于一个给定的值
+
+## 1亿个数的文件中，找出最小的5%
+
+## 2亿个数的文件中，求出出现次数最多的1000个数
 
 
