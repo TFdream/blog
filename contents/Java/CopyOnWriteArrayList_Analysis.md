@@ -1,4 +1,12 @@
 ## 概述
+Copy-On-Write简称COW，是一种用于程序设计中的优化策略。其基本思路是，从一开始大家都在共享同一个内容，当某个人想要修改这个内容的时候，才会真正把内容Copy出去形成一个新的内容然后再改，这是一种延时懒惰策略。从JDK1.5开始Java并发包里提供了两个使用CopyOnWrite机制实现的并发容器,它们是CopyOnWriteArrayList和CopyOnWriteArraySet。CopyOnWrite容器非常有用，可以在非常多的并发场景中使用到。
+
+## 什么是CopyOnWrite容器
+CopyOnWrite容器即写时复制的容器。通俗的理解是当我们往一个容器添加元素的时候，不直接往当前容器添加，而是先将当前容器进行Copy，复制出一个新的容器，然后新的容器里添加元素，添加完元素之后，再将原容器的引用指向新的容器。这样做的好处是我们可以对CopyOnWrite容器进行并发的读，而不需要加锁，因为当前容器不会添加任何元素。所以CopyOnWrite容器也是一种读写分离的思想，读和写不同的容器。
+
+## CopyOnWriteArrayList的实现原理
+在使用CopyOnWriteArrayList之前，我们先阅读其源码了解下它是如何实现的。
+
 ```java.util.concurrent.CopyOnWriteArrayList``` 用于替代同步List，在某些情况下它提供了更好的并发性能，并且在迭代期间不需要对容器进行加锁或复制。类似地，CopyOnWriteArraySet的作用是替代同步Set。
 
 "写时复制（Copy-On-Write）"容器的线程安全性在于，只要正确地发布一个事实不可变的对象，那么在访问该对象时就不再需要进一步的同步。在每次修改时，都会创建并重新发布一个新的容器副本，从而实现可变性。
@@ -13,7 +21,7 @@ CopyOnWriteArrayList 官方doc说明如下：
 
 接下来，结合 **JDK1.7 **源码来分析CopyOnWriteArrayList内部实现机制。
 
-## 构造方法
+### 构造方法
 CopyOnWriteArrayList构造方法如下：
 ```
 public class CopyOnWriteArrayList<E>
@@ -62,7 +70,8 @@ public class CopyOnWriteArrayList<E>
 ```
 
 CopyOnWriteArrayList内部的array数组被**volatile ** 修饰 能够保证 array数组内存可见性，当某个线程改变了 array数组，其它线程能够立刻看到，所以CopyOnWriteArrayList 所有的读操作都不用加锁，源码如下：
-## 读操作
+
+### 读操作
 
 ```
 	/**以下皆为Read操作**/
@@ -151,11 +160,14 @@ CopyOnWriteArrayList内部的array数组被**volatile ** 修饰 能够保证 arr
     }
 ```
 
+读的时候不需要加锁，如果读的时候有多个线程正在向ArrayList添加数据，读还是会读到旧的数据，因为写的时候不会锁住旧的ArrayList。
+
+### 更新操作
+
 ** volatile** 可以保证 可见性，但无法保证原子性，CopyOnWriteArrayList 所有的修改操作都需要通过 ReentrantLock 加锁来保证任意时刻只有一个线程能够修改CopyOnWriteArrayList 。
 关于 ReentrantLock 内部实现可以参考我的另外一篇文章：
 [JUC系列 - ReentrantLock源码解析](http://www.jianshu.com/p/eac98e598053).
 
-## 更新操作
 CopyOnWriteArrayList 几个重要修改操作的源代码如下：
 ```
 	/**以下皆为Write操作**/
@@ -356,5 +368,11 @@ CopyOnWriteArrayList 几个重要修改操作的源代码如下：
 
 可以看到，所有修改操作之前都必须先通过 ```lock.lock();```来加锁，修改完成后 通过 ```setArray(newElements);``` 来发布新的array数组，最后通过 ```lock.unlock();```释放锁。
 
-### 应用场景
+### CopyOnWrite的应用场景
+CopyOnWrite并发容器用于读多写少的并发场景。比如白名单，黑名单，商品类目的访问和更新场景。
+
 显然，每次修改容器时都会复制底层数组，这需要一定的开销，特别是当容器的规模较大时。仅当迭代操作远远多于修改操作时，才应该使用"写时复制（Copy-On-Write）"容器。例如事件通知系统：在分发通知时需要迭代已注册监听器链表，并调用每一个监听器，在大多数情况下，注册和注销事件监听器的操作远远少于接收事件通知的操作。
+
+## 参考资料
+[聊聊并发-Java中的Copy-On-Write容器](http://ifeve.com/java-copy-on-write/)
+
