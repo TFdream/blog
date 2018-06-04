@@ -8,6 +8,7 @@
 
 ### June
 六月荷花香满湖，红衣绿扇映清波。
+* June 04, 2018 >>> [Java中的Copy-On-Write容器](contents/Java/CopyOnWriteArrayList_Analysis.md)
 * June 02, 2018 >>> [“异地双活”架构 案例集锦](contents/Archtecture/high_available_arch.md)
 
 ### May
@@ -84,7 +85,6 @@
 ### June
 六月荷花香满湖，红衣绿扇映清波。
 * June 20, 2017 >>> [线程的生命周期](contents/Concurrent/Thread_Lifecycle.md)
-* June 18, 2017 >>> [Java CopyOnWriteArrayList 源码分析](contents/Java/CopyOnWriteArrayList_Analysis.md)
 * June 2, 2017 >>> [Java ThreadLocal 源码分析](contents/Java/ThreadLocal_Analysis.md)
 
 
