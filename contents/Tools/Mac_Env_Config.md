@@ -114,6 +114,14 @@ $ echo $MAVEN_HOME
 
 #### 3. 启动JVM参数调优
 
+#### 4. 模板配置
+```
+/**
+ * @author Ricky Fung
+ * @version 1.0
+ * @since ${YEAR}-${MONTH}-${DAY} ${HOUR}:${MINUTE}
+ */
+```
 
 ## Git
 ### 1. 下载Git
