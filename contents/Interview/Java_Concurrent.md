@@ -123,9 +123,123 @@ volatile关键字提供了内存可见性和禁止内存重排序。
 
 当对volatile修饰的变量进行写操作时，直接把最新值写到主内存中，并清空其它cpu工作内存中该变量所在的内存行数据，当对volatile修饰的变量进行读操作时，会读取主内存的数据
 
+## CountDownLatch
+在多线程协作完成业务功能时，有时候需要等待其他多个线程完成任务之后，主线程才能继续往下执行业务功能，在这种的业务场景下，通常可以使用Thread类的join方法，让主线程等待被join的线程执行完之后，主线程才能继续往下执行。当然，使用线程间消息通信机制也可以完成。其实，java并发工具类中为我们提供了类似“倒计时”这样的工具类，可以十分方便的完成所说的这种业务场景。
+
+下面来看些CountDownLatch的一些重要方法：
+```
+//调用该方法的线程等到构造方法传入的N减到0的时候，才能继续往下执行；
+await() throws InterruptedException;
+
+//与上面的await方法功能一致，只不过这里有了时间限制，调用该方法的线程等到指定的timeout时间后，不管N是否减至为0，都会继续往下执行；
+await(long timeout, TimeUnit unit);
+
+//使CountDownLatch初始值N减1；
+countDown();
+
+//获取当前CountDownLatch维护的值；
+long getCount();
+
+```
+
+CountDownLatch的构造方法看起：
+```
+public CountDownLatch(int count)
+```
+构造方法会传入一个整型数N，之后调用CountDownLatch的countDown方法会对N减一，知道N减到0的时候，当前调用await方法的线程继续执行。
+
+
+**另外，需要注意的是，当调用CountDownLatch的countDown方法时，当前线程是不会被阻塞，会继续往下执行**。
+
+## CyclicBarrier
+CyclicBarrier也是一种多线程并发控制的实用工具，和CountDownLatch一样具有等待计数的功能，但是相比于CountDownLatch功能更加强大。
+
+为了理解CyclicBarrier，这里举一个通俗的例子。开运动会时，会有跑步这一项运动，我们来模拟下运动员入场时的情况，假设有6条跑道，在比赛开始时，就需要6个运动员在比赛开始的时候都站在起点了，裁判员吹哨后才能开始跑步。跑道起点就相当于“barrier”，是临界点，而这6个运动员就类比成线程的话，就是这6个线程都必须到达指定点了，意味着凑齐了一波，然后才能继续执行，否则每个线程都得阻塞等待，直至凑齐一波即可。cyclic是循环的意思，也就是说CyclicBarrier当多个线程凑齐了一波之后，仍然有效，可以继续凑齐下一波。
+
+下面来看下CyclicBarrier的主要方法：
+```
+//等到所有的线程都到达指定的临界点
+await() throws InterruptedException, BrokenBarrierException 
+
+//与上面的await方法功能基本一致，只不过这里有超时限制，阻塞等待直至到达超时时间为止
+await(long timeout, TimeUnit unit) throws InterruptedException, 
+BrokenBarrierException, TimeoutException 
+
+//获取当前有多少个线程阻塞等待在临界点上
+int getNumberWaiting()
+
+//用于查询阻塞等待的线程是否被中断
+boolean isBroken()
+
+	
+//将屏障重置为初始状态。如果当前有线程正在临界点等待的话，将抛出BrokenBarrierException。
+void reset()
+
+```
+
+另外需要注意的是，CyclicBarrier提供了这样的构造方法：
+```
+public CyclicBarrier(int parties, Runnable barrierAction)
+```
+可以用来，当指定的线程都到达了指定的临界点的时，接下来执行的操作可以由barrierAction传入即可。
+
+## CountDownLatch与CyclicBarrier的比较
+CountDownLatch与CyclicBarrier都是用于控制并发的工具类，都可以理解成维护的就是一个计数器，但是这两者还是各有不同侧重点的：
+* CountDownLatch一般用于某个线程A等待若干个其他线程执行完任务之后，它才执行；而CyclicBarrier一般用于一组线程互相等待至某个状态，然后这一组线程再同时执行；CountDownLatch强调一个线程等多个线程完成某件事情。CyclicBarrier是多个线程互等，等大家都完成，再携手共进。
+* 调用CountDownLatch的countDown方法后，当前线程并不会阻塞，会继续往下执行；而调用CyclicBarrier的await方法，会阻塞当前线程，直到CyclicBarrier指定的线程全部都到达了指定点的时候，才能继续往下执行；
+* CountDownLatch方法比较少，操作比较简单，而CyclicBarrier提供的方法更多，比如能够通过getNumberWaiting()，isBroken()这些方法获取当前多个线程的状态，并且CyclicBarrier的构造方法可以传入barrierAction，指定当所有线程都到达时执行的业务功能；
+* CountDownLatch是不能复用的，而CyclicLatch是可以复用的。
+
+## Semaphore
+Semaphore可以理解为信号量，用于控制资源能够被并发访问的线程数量，以保证多个线程能够合理的使用特定资源。Semaphore就相当于一个许可证，线程需要先通过acquire方法获取该许可证，该线程才能继续往下执行，否则只能在该方法出阻塞等待。当执行完业务功能后，需要通过release()方法将许可证归还，以便其他线程能够获得许可证继续执行。
+Semaphore可以用于做流量控制，特别是公共资源有限的应用场景，比如数据库连接。假如有多个线程读取数据后，需要将数据保存在数据库中，而可用的最大数据库连接只有10个，这时候就需要使用Semaphore来控制能够并发访问到数据库连接资源的线程个数最多只有10个。在限制资源使用的应用场景下，Semaphore是特别合适的。
+
+下面来看下Semaphore的主要方法：
+```
+//获取许可，如果无法获取到，则阻塞等待直至能够获取为止
+void acquire() throws InterruptedException 
+
+//同acquire方法功能基本一样，只不过该方法可以一次获取多个许可
+void acquire(int permits) throws InterruptedException
+
+//释放许可
+void release()
+
+//释放指定个数的许可
+void release(int permits)
+
+//尝试获取许可，如果能够获取成功则立即返回true，否则，则返回false
+boolean tryAcquire()
+
+//与tryAcquire方法一致，只不过这里可以指定获取多个许可
+boolean tryAcquire(int permits)
+
+//尝试获取许可，如果能够立即获取到或者在指定时间内能够获取到，则返回true，否则返回false
+boolean tryAcquire(long timeout, TimeUnit unit) throws InterruptedException
+
+//与上一个方法一致，只不过这里能够获取多个许可
+boolean tryAcquire(int permits, long timeout, TimeUnit unit)
+
+//返回当前可用的许可证个数
+int availablePermits()
+
+```
 
 ## ConcurrentHashMap实现原理
 [谈谈ConcurrentHashMap1.7和1.8的不同实现](https://www.jianshu.com/p/e694f1e868ec)
+
+## 生产者 — 消费者问题
+生产者-消费者模式是一个十分经典的多线程并发协作的模式，弄懂生产者-消费者问题能够让我们对并发编程的理解加深。所谓生产者-消费者问题，实际上主要是包含了两类线程，一种是生产者线程用于生产数据，另一种是消费者线程用于消费数据，为了解耦生产者和消费者的关系，通常会采用共享的数据区域，就像是一个仓库，生产者生产数据之后直接放置在共享数据区中，并不需要关心消费者的行为；而消费者只需要从共享数据区中去获取数据，就不再需要关心生产者的行为。但是，这个共享数据区域中应该具备这样的线程间并发协作的功能：
+* 如果共享数据区已满的话，阻塞生产者继续生产数据放置入内；
+* 如果共享数据区为空的话，阻塞消费者继续消费数据；
+
+在实现生产者消费者问题时，可以采用三种方式：
+* 使用Object的wait/notify的消息通知机制；
+* 使用Lock的Condition的await/signal的消息通知机制；
+* 使用BlockingQueue实现。
+
+本文主要将这三种实现方式进行总结归纳。
+
 
 ## 有哪些多线程开发良好的实践?
 * 给线程命名；
@@ -148,7 +262,6 @@ volatile关键字提供了内存可见性和禁止内存重排序。
 8. **传递性**：如果操作A先行发生于操作B，操作B先行发生于操作C，那就可以得出操作A先行发生于操作C的结论。
 
 Java语言无须任何同步手段保障就能成立的先行发生规则就只有上面这些了。
-
 
 
 
