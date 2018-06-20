@@ -3,6 +3,32 @@
 ## 安装 iTerm2
 推荐 [iTerm2](https://www.iterm2.com)，iTerm2 功能强大，可以替代系统默认的命令行终端。下载解压后，将 iTerm2 直接拖入"应用程序"目录。
 
+## 安装 Xcode
+[Xcode](https://itunes.apple.com/cn/app/xcode/id497799835) 是苹果出品的包含一系列工具及库的开发套件。通过 AppStore 安装最新版本的 Xcode(9.0)。我们一般不会用 Xcode 来开发后端项目。但这一步也是必须的，因为 Xcode 会附带安装一些如 Git 等必要的软件。
+
+## 安装 Command Line Tools for Xcode
+这一步会帮你安装许多常见的基于 Unix 的工具。Xcode 命令行工具作为 Xcode 的一部分，包含了 GCC 编译器。在命令行中执行以下命令即可安装：
+```
+# 安装 Xcode Command Line Tools
+$> xcode-select --install
+```
+
+当 Xcode 和 Xcode Command Line Tools 安装完成后，你需要启动 Xcode，并点击同意接受许可协议，然后关闭 Xcode 就可以了。这一步骤也是必须的，否则 Xcode 包含的一系列开发工具都将不可用。
+
+## 安装 Homebrew
+[Homebrew](https://brew.sh/index_zh-cn.html) 作为 macOS 不可或缺的套件管理器，用来安装、升级以及卸载常用的软件。在命令行中执行以下命令即可安装：
+```
+$> /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+```
+安装后可以修改 Homebrew 源，国外源一直不是很给力，这里我们将 Homebrew 的 git 远程仓库改为中国科学技术大学开源软件镜像：
+
+## 安装一些必要的工具包
+```
+brew install wget
+brew install autoconf
+brew install openssl
+```
+
 ## Java环境配置
 ### JDK
 JDK在Mac系统中，其实有两个路径：一个是默认的，一个是用户自己下载安装的JDK。
