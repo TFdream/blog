@@ -10,7 +10,7 @@
 这一步会帮你安装许多常见的基于 Unix 的工具。Xcode 命令行工具作为 Xcode 的一部分，包含了 GCC 编译器。在命令行中执行以下命令即可安装：
 ```
 # 安装 Xcode Command Line Tools
-$> xcode-select --install
+$ xcode-select --install
 ```
 
 当 Xcode 和 Xcode Command Line Tools 安装完成后，你需要启动 Xcode，并点击同意接受许可协议，然后关闭 Xcode 就可以了。这一步骤也是必须的，否则 Xcode 包含的一系列开发工具都将不可用。
@@ -18,7 +18,7 @@ $> xcode-select --install
 ## 安装 Homebrew
 [Homebrew](https://brew.sh/index_zh-cn.html) 作为 macOS 不可或缺的套件管理器，用来安装、升级以及卸载常用的软件。在命令行中执行以下命令即可安装：
 ```
-$> /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+$ /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 ```
 安装后可以修改 Homebrew 源，国外源一直不是很给力，这里我们将 Homebrew 的 git 远程仓库改为中国科学技术大学开源软件镜像：
 
