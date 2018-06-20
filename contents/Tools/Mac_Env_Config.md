@@ -1,3 +1,7 @@
+# 在 macOS High Sierra 10.13 搭建Java开发环境
+
+## 安装 iTerm2
+推荐 [iTerm2](https://www.iterm2.com)，iTerm2 功能强大，可以替代系统默认的命令行终端。下载解压后，将 iTerm2 直接拖入"应用程序"目录。
 
 ## Java环境配置
 ### JDK
