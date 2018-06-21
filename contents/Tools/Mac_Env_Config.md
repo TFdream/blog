@@ -138,9 +138,8 @@ $ echo $MAVEN_HOME
 
 #### 2. 激活方式
 激活方式如下：
-* 通过License Server：http://intellij.mandroid.cn/。
-* 打开 http://idea.lanyus.com/ 获取Activation coce。
-* 通过License Server：http://idea.iteblog.com/key.php
+* 通过License Server：http://idea.iteblog.com/key.php[已被封杀]
+* 通过License Server：http://idea.toocruel.net[已被封杀]
 
 #### 3. 启动JVM参数调优
 
