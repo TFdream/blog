@@ -132,6 +132,15 @@ $ mvn -v
 $ echo $MAVEN_HOME
 ```
 
+#### setting.xml
+Maven的配置文件settings.xml存在于两个地方：
+* 安装的地方：${M2_HOME}/conf/settings.xml
+* 用户的目录：${user.home}/.m2/settings.xml
+
+前者又被叫做全局配置，对操作系统的所有使用者生效；后者被称为用户配置，只对当前操作系统的使用者生效。如果两者都存在，它们的内容将被合并，并且用户范围的settings.xml会覆盖全局的settings.xml。
+
+Windows位置在C:\Users\{你的用户名}\.m2\settings.xml，Mac位置在/Users/{你的用户名}/.m2/settings.xml。
+
 ### IntelliJ IDEA
 #### 1. 下载
 [点此](https://www.jetbrains.com/idea/download/) 下载IntelliJ IDEA安装包。
