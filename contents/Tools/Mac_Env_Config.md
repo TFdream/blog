@@ -225,3 +225,12 @@ $ mysql.server start
 $ mysql_secure_installation
 ```
 
+其他命令：
+```
+# 获取 service 列表
+brew services list
+# 重启 mysql 服务
+brew services restart mysql
+# 停止 mysql 服务
+brew services stop mysql
+```
