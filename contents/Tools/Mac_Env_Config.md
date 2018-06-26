@@ -210,3 +210,18 @@ $ ssh-keygen -t rsa -C “example@example.com”
 #### 3 .添加ssh密钥
 在gitlab/github个人中心```SSH keys```添加ssh密钥，这要添加的是“id_rsa.pub”里面的公钥。
 
+
+## 安装MySQL
+一、安装MySQL
+```
+$ brew install mysql 
+```
+二、启动mysql服务
+```
+$ mysql.server start
+```
+三、初始化mysql配置
+```
+$ mysql_secure_installation
+```
+
