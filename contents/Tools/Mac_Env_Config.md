@@ -234,3 +234,12 @@ brew services restart mysql
 # 停止 mysql 服务
 brew services stop mysql
 ```
+
+### 常见问题
+解决 Authentication plugin ‘caching_sha2_password’ cannot be loaded 的方法，可以往你的连接工具、或者程序应用显示指定身份验证方式，或者直接改为以前的版本方式： 
+你可以使用如下方式：
+```
+ALTER USER root@localhost IDENTIFIED WITH mysql_native_password BY ‘root2018’;
+```
+
+修改root的密码改为root2018。
