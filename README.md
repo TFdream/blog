@@ -6,6 +6,15 @@
 ## 2018
 「但行好事，莫问前程」
 
+### October
+金秋风景如画，十月天高云淡。 
+* October 11, 2018 >>> [排行榜系统设计](https://github.com/TFdream/blog/issues/21)
+
+### September
+星河璀璨，凤舞九天。 
+* September 27, 2018 >>> [邀请码生成算法](https://github.com/TFdream/blog/issues/20)
+* September 19, 2018 >>> [基于Redis的分布式锁实现](https://github.com/TFdream/blog/issues/16)
+
 ### June
 六月荷花香满湖，红衣绿扇映清波。
 * June 04, 2018 >>> [Java中的Copy-On-Write容器](contents/Java/CopyOnWriteArrayList_Analysis.md)
