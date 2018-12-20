@@ -6,6 +6,11 @@
 ## 2018
 「但行好事，莫问前程」
 
+### December
+日晏霜浓十二月，林疏石瘦第三溪。
+* December 20, 2018 >>> [抽奖码生成算法 ](https://github.com/TFdream/blog/issues/50)
+* December 10, 2018 >>> [签到系统设计](https://github.com/TFdream/blog/issues/32)
+
 ### October
 金秋风景如画，十月天高云淡。 
 * October 11, 2018 >>> [排行榜系统设计](https://github.com/TFdream/blog/issues/21)
