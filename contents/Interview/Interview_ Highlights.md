@@ -1,5 +1,5 @@
 
-## java基础偏
+## java基础篇
 ### 集合
 * Arraylist 与 LinkedList 区别
 * ArrayList 与 Vector 区别
@@ -34,3 +34,27 @@
 ## HTTP/TCP
 * HTTP 请求的 GET 与 POST 方式的区别
 * session 与 cookie 区别
+
+## 框架篇
+### Spring
+* BeanFactory 和 ApplicationContext 有什么区别
+* Spring Bean 的生命周期
+* Spring IOC 如何实现
+* 说说 Spring AOP
+* Spring AOP 实现原理
+* 动态代理（cglib 与 JDK）
+* Spring 事务实现方式
+* Spring 事务底层原理
+* 如何自定义注解实现功能
+* Spring MVC 运行流程
+* Spring MVC 启动流程
+* Spring 的单例实现原理
+* Spring 框架中用到了哪些设计模式
+
+### Mybatis
+
+### Netty
+
+### Spring Boot
+
+
