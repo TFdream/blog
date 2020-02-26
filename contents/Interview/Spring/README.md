@@ -27,6 +27,9 @@ Spring MVC原理：https://www.cnblogs.com/xiaoxi/p/6164383.html
 ### 1.Spring Boot 原理
 Spring Boot干货系列：（三）启动原理解析：https://www.cnblogs.com/zheting/p/6707035.html
 
+It's a Kind of Magic: Under the Covers of Spring Boot: https://content.pivotal.io/springone-platform-2017/its-a-kind-of-magic-under-the-covers-of-spring-boot-brian-clozel-st%C3%A9phane-nicoll
+
+### 2.Spring Boot除了自动配置，相比传统的 Spring 有什么其他的区别？
 
 
 
