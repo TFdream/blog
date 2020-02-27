@@ -1,5 +1,5 @@
 # Hystrix
-[Hystrix](https://github.com/Netflix/Hystrix)是Netflix开源的一款容错框架，同样具有自我保护能力。
+[Hystrix](https://github.com/Netflix/Hystrix)是Netflix开源的一款容错框架，旨在隔离远程系统，服务和第三方库的访问点，当出现故障是不可避免的故障时，停止级联故障并在复杂的分布式系统中实现弹性。
 
 Hystrix通过命令模式对发送请求的对象和执行请求的对象进行解耦，将不同类型的业务请求封装为对应的命令请求。
 
