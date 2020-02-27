@@ -48,6 +48,6 @@ Spring Cloud 关注的是**宏观**，具体关注全局的微服务协调整理
 下面是这三个服务注册中心的特性对比， 没有最好的服务中心， 只有最合适的，我们可以根据项目的实际情况来进行选择。
 | | 开发语言 | CAP | 一致性算法 | 服务健康检查 | 对外接口 | kv存储 | 多数据中心 |
 | --- |--- |--- |--- |--- |--- |--- |--- |
-| Eureka | java | AP| - | | | | |
-| Zookeeper | java | CP | Zab | | | | |
-| Consul | go | CP | Raft | | | | |
+| Eureka | java | AP| - | 可配置 | HTTP | - | - |
+| Zookeeper | java | CP | Zab | 弱，长链接 |client | 支持 | - |
+| Consul | go | CP | Raft | 服务状态 | http和https | 支持 |支持 |
