@@ -12,7 +12,7 @@ Set-Cookie: value[; expires=date][; domain=domain][; path=path][; secure]
 ### cookie 常用属性项
 | 属性项 | 属性项介绍 |
 | --- | --- |
-| NAME=VALUE	| 键值对，可以设置要保存的 Key/Value，注意这里的 NAME 不能和其他属性项的名字一样|
+| Name	| 键值对，可以设置要保存的 Key/Value，注意这里的 NAME 不能和其他属性项的名字一样|
 | Expires |	过期时间，在设置的某个时间点后该 Cookie 就会失效 |
 | Domain	| 生成该 Cookie 的域名，如 domain="www.baidu.com" |
 | Path |	该 Cookie 是在当前的哪个路径下生成的，如 path=/wp-admin/ |
