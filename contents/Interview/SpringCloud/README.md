@@ -9,6 +9,7 @@
 [Hystrix专题](Hystrix.md)
 
 ### Feign
+[Feign专题](Feign.md)
 
 ### 请说说eureka、consul和 zookeeper 的区別?
 
