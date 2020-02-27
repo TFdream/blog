@@ -16,6 +16,7 @@ Set-Cookie: value[; expires=date][; domain=domain][; path=path][; secure]
 | Expires |	过期时间，在设置的某个时间点后该 Cookie 就会失效 |
 | Domain	| 生成该 Cookie 的域名，如 domain="www.baidu.com" |
 | Path |	该 Cookie 是在当前的哪个路径下生成的，如 path=/wp-admin/ |
+| httpOnly | 这个选项用来设置cookie是否能通过js去访问。默认情况下，cookie不会带httpOnly选项(即为空)|
 |Secure |	如果设置了这个属性，那么只会在 SSH 连接时才会回传该 Cookie |
 
 ### Expires
@@ -27,14 +28,18 @@ Set-Cookie: value[; expires=date][; domain=domain][; path=path][; secure]
 
 当maxAge为0时，表示立即删除Cookie。
 
-### Cookie的域名
+### Domain
 Cookie是不可以跨域名的，隐私安全机制禁止网站非法获取其他网站的Cookie。
 
 正常情况下，同一个一级域名下的两个二级域名也不能交互使用Cookie，比如book.jd.com和shouji.jd.com，因为二者的域名不完全相同。如果想要jd.com名下的二级域名都可以使用该Cookie，需要设置Cookie的domain参数为.jd.com，这样使用xinfang.jd.com和diannao.jd.com 就能访问同一个cookie了。
 
-### Cookie的路径
-path属性决定允许访问Cookie的路径。比如，设置为"/"表示允许所有路径都可以使用Cookie
+### Path
+path属性决定允许访问Cookie的路径。比如，设置为"/"表示允许所有路径都可以使用Cookie。
 
+### httpOnly
+这个选项用来设置cookie是否能通过 js 去访问。默认情况下，cookie不会带httpOnly选项(即为空)，所以默认情况下，客户端是可以通过js代码去访问（包括读取、修改、删除等）这个cookie的。当cookie带httpOnly选项时，客户端则无法通过js代码去访问（包括读取、修改、删除等）这个cookie。
+
+在客户端是不能通过js代码去设置一个httpOnly类型的cookie的，这种类型的cookie只能通过服务端来设置。
 
 ## Session
 
