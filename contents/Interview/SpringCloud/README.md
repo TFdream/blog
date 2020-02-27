@@ -6,6 +6,7 @@
 [Eureka专题](Eureka.md)
 
 ### Hystrix
+[Hystrix专题](Hystrix.md)
 
 ### Feign
 
