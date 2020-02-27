@@ -96,3 +96,5 @@ Eureka Server 各个节点都是平等的，几个节点挂掉不会影响正常
 
 这就是Eurka基本工作流程。
 
+### Eureka Server之间的注册表信息同步
+链接：https://cloud.tencent.com/developer/article/1083131
