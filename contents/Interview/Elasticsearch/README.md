@@ -6,13 +6,23 @@ Elasticsearch面试专题。
 
 ## ElasticSearch中的集群、节点、索引、文档、类型是什么？
 
-## Elasticsearch索引文档的过程
+## Elasticsearch 索引文档的过程
 协调节点默认使用文档ID参与计算（也支持通过routing），以便为路由提供合适的分片。
 shard = hash(document_id) % (num_of_primary_shards)当分片所在的节点接收到来自协调节点的请求后，会将请求写入到Memory Buffer，然后定时（默认是每隔1秒）写入到Filesystem Cache，这个从Momery Buffer到Filesystem 　　Cache的过程就叫做refresh；
 
 当然在某些情况下，存在Momery Buffer和Filesystem Cache的数据可能会丢失，ES是通过translog的机制来保证数据的可靠性的。其实现机制是接收到请求后，同时也会写入到translog中，当Filesystem cache中的数据写入到磁盘中时，才会清除掉，这个过程叫做flush；
 在flush过程中，内存中的缓冲将被清除，内容被写入一个新段，段的fsync将创建一个新的提交点，并将内容刷新到磁盘，旧的translog将被删除并开始一个新的translog。
 flush触发的时机是定时触发（默认30分钟）或者translog变得太大（默认为512M）时；
+
+## Elasticsearch 读取文档的过程
+可以通过 doc id 来查询，会根据 doc id 进行 hash，判断出来当时把 doc id 分配到了哪个 shard 上面去，从那个 shard 去查询。
+
+* 客户端发送请求到任意一个 node，称为协调节点（coordinate node）。
+* coordinate node 对 doc id 进行哈希路由，将请求转发到对应的 node，此时会使用 round-robin随机轮询算法，在 primary shard 以及其所有 replica 中随机选择一个，让读请求负载均衡。
+* 接收请求的 node 返回 document 给 coordinate node。
+* coordinate node 返回 document 给客户端。
+
+写请求是写入 primary shard，然后同步给所有的 replica shard；读请求可以从 primary shard或replica shard 读取，采用的是随机轮询算法。
 
 ## Elasticsearch更新和删除文档的过程
 删除和更新也都是写操作，但是Elasticsearch中的文档是不可变的，因此不能被删除或者改动以展示其变更；
@@ -22,6 +32,7 @@ flush触发的时机是定时触发（默认30分钟）或者translog变得太�
 在新的文档被创建时，Elasticsearch会为该文档指定一个版本号，当执行更新时，旧版本的文档在.del文件中被标记为删除，新版本的文档被索引到一个新段。旧版本的文档依然能匹配查询，但是会在结果中被过滤掉。
 
 ## Elasticsearch搜索的过程
+
 
 ## 在并发情况下Elasticsearch如果保证读写一致？
 可以通过版本号使用乐观并发控制，以确保新版本不会被旧版本覆盖，由应用层来处理具体的冲突；
