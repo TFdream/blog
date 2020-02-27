@@ -110,6 +110,7 @@ public class QueryByOrderIdCommandSemaphore extends HystrixCommand<Integer> {
 
 ### 熔断器配置
 Circuit Breaker主要包括如下6个参数：
+
 1、circuitBreaker.enabled
 是否启用熔断器，默认是TRUE。
 
