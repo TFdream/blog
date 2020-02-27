@@ -18,6 +18,23 @@ Set-Cookie: value[; expires=date][; domain=domain][; path=path][; secure]
 | Path |	该 Cookie 是在当前的哪个路径下生成的，如 path=/wp-admin/ |
 |Secure |	如果设置了这个属性，那么只会在 SSH 连接时才会回传该 Cookie |
 
+### Expires
+该属性用来设置Cookie的有效期。Cookie中的maxAge用来表示该属性，单位为秒。Cookie中通过getMaxAge()和setMaxAge(int maxAge)来读写该属性。maxAge有3种值，分别为正数，负数和0。
+
+如果maxAge属性为正数，则表示该Cookie会在maxAge秒之后自动失效。浏览器会将maxAge为正数的Cookie持久化，即写到对应的Cookie文件中（每个浏览器存储的位置不一致）。无论客户关闭了浏览器还是电脑，只要还在maxAge秒之前，登录网站时该Cookie仍然有效。下面代码中的Cookie信息将永远有效。
+
+当maxAge属性为负数，则表示该Cookie只是一个临时Cookie，不会被持久化，仅在本浏览器窗口或者本窗口打开的子窗口中有效，关闭浏览器后该Cookie立即失效。
+
+当maxAge为0时，表示立即删除Cookie。
+
+### Cookie的域名
+Cookie是不可以跨域名的，隐私安全机制禁止网站非法获取其他网站的Cookie。
+
+正常情况下，同一个一级域名下的两个二级域名也不能交互使用Cookie，比如book.jd.com和shouji.jd.com，因为二者的域名不完全相同。如果想要jd.com名下的二级域名都可以使用该Cookie，需要设置Cookie的domain参数为.jd.com，这样使用xinfang.jd.com和diannao.jd.com 就能访问同一个cookie了。
+
+### Cookie的路径
+path属性决定允许访问Cookie的路径。比如，设置为"/"表示允许所有路径都可以使用Cookie
+
 
 ## Session
 
