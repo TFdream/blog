@@ -1,5 +1,5 @@
 # Eureka 工作原理
-Eureka 作为 Spring Cloud 体系中最核心、默认的注册中心组件，研究它的运行机制，有助于我们在工作中更好地使用它。
+[Eureka](https://github.com/Netflix/eureka) 作为 Spring Cloud 体系中最核心、默认的注册中心组件，研究它的运行机制，有助于我们在工作中更好地使用它。
 
 ## Eureka 核心概念
 Eureka包含两个组件：Eureka Server和Eureka Client。
