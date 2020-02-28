@@ -32,14 +32,21 @@ Redis采用的是定期删除+惰性删除策略。
 定期删除，redis默认每个100ms检查，是否有过期的key,有过期key则删除。需要说明的是，redis不是每个100ms将所有的key检查一次，而是随机抽取进行检查(如果每隔100ms,全部key进行检查，redis岂不是卡死)。因此，如果只采用定期删除策略，会导致很多key到时间没有删除。
 
 内存淘汰策略：
-volatile-lru：从已设置过期时间的数据集（server.db[i].expires）中挑选最近最少使用的数据淘汰
-volatile-ttl：从已设置过期时间的数据集（server.db[i].expires）中挑选将要过期的数据淘汰
-volatile-random：从已设置过期时间的数据集（server.db[i].expires）中任意选择数据淘汰
-allkeys-lru：从数据集（server.db[i].dict）中挑选最近最少使用的数据淘汰
-allkeys-random：从数据集（server.db[i].dict）中任意选择数据淘汰
-no-enviction（驱逐）：禁止驱逐数据，新写入操作会报错
+* volatile-lru：从已设置过期时间的数据集（server.db[i].expires）中挑选最近最少使用的数据淘汰
+* volatile-ttl：从已设置过期时间的数据集（server.db[i].expires）中挑选将要过期的数据淘汰
+* volatile-random：从已设置过期时间的数据集（server.db[i].expires）中任意选择数据淘汰
+* allkeys-lru：从数据集（server.db[i].dict）中挑选最近最少使用的数据淘汰
+* allkeys-random：从数据集（server.db[i].dict）中任意选择数据淘汰
+* no-enviction（驱逐）：禁止驱逐数据，新写入操作会报错
 
-## 缓存雪崩、缓存击穿、缓存穿透
+## 缓存穿透、缓存击穿和缓存雪崩
+### 缓存穿透
+在高并发下，查询一个不存在的值时，缓存不会被命中，导致大量请求直接落到数据库上，如活动系统里面查询一个不存在的活动。
+
+### 缓存击穿
+在高并发下，对一个特定的值进行查询，但是这个时候缓存正好过期了，缓存没有命中，导致大量请求直接落到数据库上，如活动系统里面查询活动信息，但是在活动进行过程中活动缓存突然过期了。
+### 缓存雪崩
+在高并发下，大量的缓存key在同一时间失效，导致大量的请求落到数据库上，如活动系统里面同时进行着非常多的活动，但是在某个时间点所有的活动缓存全部过期。
 
 ## Redis热点数据
 
