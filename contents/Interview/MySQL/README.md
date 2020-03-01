@@ -40,3 +40,8 @@ A：（额、这个问题我回答的不好，后来我自己查资料才知道�
 如，表t_sample中有一个普通索引 idx_key1_key2(key1,key2)，当我们通过SQL语句：select key2 from t_sample where key1 = 'keytest'的时候，就可以通过覆盖索引查询，无需回表。
 
 ### 联合索引、最左前缀匹配
+
+
+### 事务隔离级
+
+
