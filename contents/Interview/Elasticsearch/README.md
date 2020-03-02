@@ -1,6 +1,24 @@
 # Elasticsearch面试专题
 Elasticsearch面试专题。
 
+## Elasticsearch的核心概念
+near realTime（NRT）：近实时，从写入数据到数据可以搜索到有一个小延迟（一秒），基于es的搜索和分析可以达到秒级
+
+集群：包含多个节点，每个节点是属于哪个集群是通过一个配置（集群名称，默认是elasticsearch）来决定的。
+
+node节点：集群中的一个节点，节点的名称是默认随机分配的，在执行运维管理操作的时候节点名称很重要，默认节点会加入一个叫elasticsearch的集群。
+
+index索引：包含一堆有相似结构的document文档数据，一个index代表了一类类似的或相同的document。
+
+type类型：每个index里面可以有多个或一个type，6.x版本默认为_doc。
+
+document和field：document是es中最小的数据单元，一个document可以是一条数据，通常用json数据结构表示，每个index下的type中可以存储多个document，一个document里面有多个field，每个field就是一个数据字段。
+
+shard：单台机器无法存储大量的数据，es可以将一个index中的数据切分为多个shard，分布在多个机器上进行存储，有了shard可以进行横向扩展，进而可以存储更多的数据，让搜索和分析等操作分布到多台机器上去执行，提高吞吐量和性能，每个shard都是一个Lucene index。
+
+replica：任何一个服务都可能出现故障或者宕机，此时shard的数据就有可能丢失，因此可以为每个shard建立replica副本，replica可以在shard发生故障时提供备用服务保证数据不丢失，多个replica还可以提供搜索和分析等操作的性能。建立index时一次性设置primary shard，不能进行修改，默认是5个，replica可以随便修改，默认是1个（这里的1个的意思是每个primary shard拥有一个replica shard），默认每个索引有10个shard，5个primary shard，5个replica shard，最小的高可用配置，默认是2台服务器。
+
+
 ## 什么是倒排索引？ 
 倒排索引是搜索引擎的核心。搜索引擎的主要目标是在查找发生搜索条件的文档时提供快速搜索。
 通俗解释一下就可以。
