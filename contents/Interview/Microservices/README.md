@@ -47,9 +47,9 @@
 4. 断路器和负载平衡。
 5. 分布式消息传递。
 
-## springCloud和dubbo 有哪些区别？
+## SpringCloud和dubbo 有哪些区别？
 
-## eureka和zookeeper的区别?
+## Eureka和Consul的区别?
 最大的区别是Eureka保证AP, Consul为CP。
 
 Consul强一致性(C)带来的是：
