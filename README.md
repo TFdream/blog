@@ -1,7 +1,13 @@
 # FX_SKY
 [![License](https://img.shields.io/badge/license-Apache%202-green.svg)](https://www.apache.org/licenses/LICENSE-2.0)   
 
-**且码且思考**
+## 2020
+** 快乐工作，认真生活 **
+
+### August
+八月秋高风怒号，卷我屋上三重茅。
+* August 10, 2020 >>> [【泛彩票类】抽奖码生成算法](https://github.com/TFdream/system-design-notes/issues/3)
+
 
 ## 2018
 「但行好事，莫问前程」
