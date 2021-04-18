@@ -21,6 +21,23 @@ CPU 缓存可以分为一级缓存、二级缓存（L2），部分高端 CPU 还
 
 为了达到数据访问的一致，需要各个处理器在访问缓存时遵循一些协议，在读写时根据协议来操作，常见的协议有MSI，MESI，MOSI等。其中最经典的MESI协议
 
+![image](https://user-images.githubusercontent.com/13992911/115152995-45bd9600-a0a6-11eb-8775-2ed3ed2ee182.png)
+
+
+## Java内存模型和硬件内存架构之间的桥接
+Java内存模型与硬件内存架构之间存在差异。硬件内存架构没有区分线程栈和堆。对于硬件，所有的线程栈和堆都分布在主内存中。部分线程栈和堆可能有时候会出现在CPU缓存中和CPU内部的寄存器中。如下图所示：
+
+![image](https://user-images.githubusercontent.com/13992911/115153025-5c63ed00-a0a6-11eb-98e1-3a291088c9b6.png)
+
+从抽象的角度来看，JMM定义了线程和主内存之间的抽象关系：
+* 线程之间的共享变量存储在主内存（Main Memory）中
+* 每个线程都有一个私有的本地内存（Local Memory），本地内存是JMM的一个抽象概念，并不真实存在，它涵盖了缓存、写缓冲区、寄存器以及其他的硬件和编译器优化。本地内存中存储了该线程以读/写共享变量的拷贝副本。
+* 从更低的层次来说，主内存就是硬件的内存，而为了获取更好的运行速度，虚拟机及硬件系统可能会让工作内存优先存储于寄存器和高速缓存中。
+* Java内存模型中的线程的工作内存（working memory）是cpu的寄存器和高速缓存的抽象描述。而JVM的静态内存储模型（JVM内存模型）只是一种对内存的物理划分而已，它只局限在内存，而且只局限在JVM的内存。
+
+![image](https://user-images.githubusercontent.com/13992911/115153049-7e5d6f80-a0a6-11eb-8e89-062f8405e4a6.png)
+
 
 ## 相关资料
+* [Java内存模型（JMM）总结](https://zhuanlan.zhihu.com/p/29881777)
 * [杂谈伪共享(false sharing)及解决方案](https://github.com/TFdream/workshop/issues/37)
